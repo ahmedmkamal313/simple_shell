@@ -17,3 +17,21 @@ char *_strchr(char *str, char ch)
 	str++; /*move to the next character “str++”.*/
 	return (NULL); /*return null if ch isn’t found.*/
 }
+
+/**
+ * _strlen - return the length of a string.
+ * @str: the pointer to be string.
+ * Return: the length.
+ */
+
+int _strlen(char *str)
+{
+	int len = 0; /*Initialize a variable to store length “ len = 0 “.*/
+
+	while (*str != '\0') /*Loop until the end of the string.*/
+	{
+		len++; /*ncrement the length by one “ len ++”.*/
+		str++; /*Move to the next character “ str ++”.*/
+	}
+	return (length); /*Return the length.*/
+}
