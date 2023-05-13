@@ -83,3 +83,24 @@ unsigned int _strspn(char *str, char *prefix)
 	return (length); /*Return the length.*/
 }
 
+/**
+ * _strcpy - copy a string.
+ * @dest: the destination.
+ * @src: The source of the string.
+ * Return: p.
+ */
+
+char *_strcpy(char *dest, char *src)
+{
+	char *p = dest; /*store the original pointer to dest “ char *p = dest ”.*/
+
+	while (*src != '\0') /*Loop until end of string “ *src != ‘\0’ “.*/
+	{
+		*dest = *src; /*Copy each character from src to dest “ *dest = *src”.*/
+		dest++; /*Move to next dest “ dest++”.*/
+		src++; /*Move to next src “ src++”.*/
+	}
+	*dest = '\0'; /*Add null terminator of dest “ *dest = ‘\0’ “.*/
+
+	return (p); /*Return the original pointer to dest “ p “.*/
+}
