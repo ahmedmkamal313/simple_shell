@@ -48,3 +48,34 @@ int _strcmp(char *s1, char *s2)
 	/* if one string is longer than other, return the difference */
 	return (*s1 - *s2);
 }
+
+/**
+ * _strncmp - Compares two strings up to n characters.
+ * @s1: The first string to be compared.
+ * @s2: The second string to be compared.
+ * @n: The number of characters to compare.
+ * Return: Positive integer if s1 > s2
+ * 0 if s1 = s2
+ * Negative integer if s1 < s2
+ */
+
+int _strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t i;
+
+	/* loop through character of both strings until n or null */
+	for (i = 0; s1[i] && s2[i] && i < n; i++)
+	{
+		/* if the characters are ifferent return the difference */
+		if (s1[i] > s2[i])
+			return (s1[i] - s2[i]);
+		else if (s1[i] < s2[i])
+			return (s1[i] - s2[i]);
+	}
+	/* if n is reached, return 0 */
+	if (i == n)
+		return (0);
+	/* otherwise, return -15 */
+	else
+		return (-15);
+}
