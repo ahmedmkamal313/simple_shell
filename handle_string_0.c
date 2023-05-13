@@ -23,6 +23,29 @@ char *_strcat(char *dest, char *src)
 }
 
 /**
+ * _strncat - concatenates two string by copying n bytes from the source.
+ * @dest: the destination string.
+ * @src: the source string.
+ * @n: the number of bytes to copy from the source.
+ * Return: a pointer to the destination string.
+ */
+
+char *_strncat(char *dest, const char *src, size_t n)
+{
+	/* declare a variable to store the length of the destination string */
+	size_t dest_len = _strlen(dest);
+	/* declare a variable to loop through the source string */
+	size_t i;
+
+	/* loop through the source string until n is reached or null */
+	for (i = 0; i < n && src[i] != '\0'; i++)
+		/* copy the char from the source to end of dest */
+		dest[dest_len + i] = '\0';
+	/* return pointer to destination string */
+	return (dest);
+}
+
+/**
  * _strcmp - compares two strings.
  * @s1: the 1st string to be compared.
  * @s2: the second string.
