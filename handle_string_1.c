@@ -40,7 +40,7 @@ int _strlen(char *str)
  * _is_included - helper function that checks
  * if a character is in a string.
  * @letter: the character to be check.
- * @*prefix: the string to be cheack.
+ * @*prefix: the string to be check.
  * Return: 0.
  */
 
@@ -56,3 +56,30 @@ int _is_included(char letter, char *prefix)
 	}
 	return (0); /*Return 0.*/
 }
+
+/**
+ * _strspn - get the length of a prefix substring.
+ * @str: the pointer to be string.
+ * @prefix: the string to be check.
+ * Return: the length.
+ */
+
+unsigned int _strspn(char *str, char *prefix)
+{
+	unsigned int length = 0; /*Initialize a variable store length “length”.*/
+
+	while (*str != '\0') /*Loop until the end of the string.*/
+	{
+		if (is_included(*str, prefix)) /*Check if the current character in prefix.*/
+		{
+			length++; /*Increment the length by one “ length++’.*/
+		}
+		else
+		{
+			break; /*Break the loop if not in prefix.*/
+		}
+		str++; /*Move the next character “str++”.*/
+	}
+	return (length); /*Return the length.*/
+}
+
