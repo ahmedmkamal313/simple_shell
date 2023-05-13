@@ -35,3 +35,24 @@ int _strlen(char *str)
 	}
 	return (length); /*Return the length.*/
 }
+
+/**
+ * _is_included - helper function that checks
+ * if a character is in a string.
+ * @letter: the character to be check.
+ * @*prefix: the string to be cheack.
+ * Return: 0.
+ */
+
+int _is_included(char letter, char *prefix)
+{
+	while (*prefix != '\0') /*Loop through prefix.*/
+	{
+		if (*prefix == letter) /*Check if letter matches any character in prefix.*/
+		{
+			return (1); /*Return 1 if found.*/
+		}
+		prefix++; /*Move to next character “ prefix++ “.*/
+	}
+	return (0); /*Return 0.*/
+}
