@@ -32,7 +32,7 @@ char *error_env(char **args)
 	/* copy the program name to the error message */
 	_strcpy(error_msg, program_name);
 	/* concatenate a colon and a space */
-	_strcat(error_msg, ": "0);
+	_strcat(error_msg, ": ");
 	/* concatenate the history string */
 	_strcat(error_msg, history_str);
 	/* conactenate another colon and a space */
