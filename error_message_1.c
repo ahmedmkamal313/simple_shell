@@ -61,7 +61,7 @@ char *error_exit(char **args)
 		_strlen(args[0]) + 27;
 
 	/* allocate memory for the error message */
-	error = malloc(sizeof(char) * (errror_len + 1));
+	error = malloc(sizeof(char) * (error_len + 1));
 	if (!error_msg)
 	{
 		free(history_str);
@@ -71,11 +71,11 @@ char *error_exit(char **args)
 	/* copy the program name to the error message */
 	_strcpy(error_msg, program_name);
 	/* concatenate a colon and a space */
-	_strcat(error, ": ");
-	_strcat(error, history_str);
-	_strcat(error, ": exit: Illegal number: ");
-	_strcat(error, args[0]);
-	_strcat(error, "\n");
+	_strcat(error_msg, ": ");
+	_strcat(error_msg, history_str);
+	_strcat(error_msg, ": exit: Illegal number: ");
+	_strcat(error_msg, args[0]);
+	_strcat(error_msg, "\n");
 
 	free(history_str);
 	return (error_msg);
@@ -104,7 +104,7 @@ char *error_cd(char **args)
 	error_len = _strlen(progrm_name) + _strlen(history_str) +
 		_strlen(args[0]) + 24;
 	/* allocate memory for the error message */
-	error = malloc(sizeof(char) * (errror_len + 1));
+	error = malloc(sizeof(char) * (error_len + 1));
 	if (!error_msg)
 	{
 		free(history_str);
@@ -114,14 +114,14 @@ char *error_cd(char **args)
 	/* copy the program name to the error message */
 	_strcpy(error_msg, program_name);
 	/* concatenate a colon and a space */
-	_strcat(error, ": ");
-	_strcat(error, history_str);
+	_strcat(error_msg, ": ");
+	_strcat(error_msg, history_str);
 	if (args[0][0] == '-')
-		_strcat(error, ": cd: Illegal option ");
+		_strcat(error_msg, ": cd: Illegal option ");
 	else
-		_strcat(error, ": cd: can't cd to ");
-	_strcat(error, args[0]);
-	_strcat(error, "\n");
+		_strcat(error_msg, ": cd: can't cd to ");
+	_strcat(error_msg, args[0]);
+	_strcat(error_msg, "\n");
 
 	free(history_str);
 	return (error_msg);
