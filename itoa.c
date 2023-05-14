@@ -31,3 +31,50 @@ int num_len(int num)
 
 	return (length); /*Return the length.*/
 }
+
+/**
+ * _itoa - Converts an int to a string.
+ * @num: the number to be count.
+ * Return: beffer.
+ */
+
+char *_itoa(int num)
+{
+	/*Variable to store the length of the string (length = num_len(num).*/
+	int length = num_len(num);
+	/*Variable to store the absolute value of num (num1).*/
+	unsigned int num1;
+	/*Variable to store the string (buffer).*/
+	char *buffer;
+
+	/*Allocate memory for the string, including the null terminator.*/
+	buffer = malloc(sizeof(char) * (length + 1));
+
+	if (!buffer) /*Check if memory allocation was successful.*/
+		return (NULL);
+
+	buffer[length] = '\0'; /*Set the last character of the string to '\0'.*/
+
+	/*If number is negative, set first character to '-' and make num1 positive.*/
+	if (num < 0)
+	{
+		num1 = num * -1;
+		buffer[0] = '-';
+	}
+	else /*Otherwise, assign num to num1.*/
+	{
+		num1 = num;
+	}
+	/*Loop from end of string to second character (or first if positive).*/
+
+	length--;
+
+	do {
+		/*Set the current character to the last digit of num1 plus '0'.*/
+		buffer[length] = (num1 % 10) + '0';
+		num1 /= 10; /*Divide num1 by 10 to remove the last digit.*/
+		length--; /*Decrement len to move to the previous character.*/
+	} while (num1 > 0)
+
+	return (buffer)
+}
