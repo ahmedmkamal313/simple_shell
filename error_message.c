@@ -45,3 +45,31 @@ char *error_env(char **args)
 	free(history_str);
 	return (error_msg);
 }
+
+/**
+ * error_1 - creates an error messsage
+ * @args: array passed to the command.
+ * Return: The error.
+ */
+
+char *error_1(char **args)
+{
+	char *error_msg; /* the error */
+	int error_len; /* the length of the error msg */
+
+	/* calculate the length of the error message */
+	error_len = _strlen(program_name) + _strlen(args[0]) + 13;
+	/* allocate memory for the error */
+	error_msg = malloc(sizeof(char) * (error_len + 1));
+	if (!error_msg)
+		return (NULL);
+
+	/* copy the program_name to error */
+	_strcpy(error_msg, program_name);
+	_strcat(error_msg, ": ");
+	_strcat(error_msg, args[0]);
+	_strcat(error_msg, " not found\n");
+
+	return (error_msg);
+}
+
