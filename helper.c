@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * free_args - frees the memory allocated for a null-terminated array of strings.
+ * free_args - frees the memory allocated for null-terminated array of strings
  * @args: a pointer to the array of strings.
  * @front: the original pointer to the array of strings.
  */
@@ -25,8 +25,10 @@ void free_args(char **args, char **front)
 
 void logical_ops(char *line, ssize_t *new_len)
 {
-	/* Declare three variables to store the previous,
-	 * current and next characters in the line */
+	/**
+	 * Declare three variables to store the previous,
+	 * current and next characters in the line
+	 */
 	char prev, curr, next;
 
 	/* assign the previous character to prev */
@@ -51,3 +53,42 @@ void logical_ops(char *line, ssize_t *new_len)
 			(*new_len)++;
 	}
 }
+
+/**
+ * get_new_len - get the length of a line
+ * @line: the checked line.
+ * Return: the new length.
+ */
+
+ssize_t get_new_len(char *line)
+{
+	size_t i;
+	ssize_t new_len = 0;
+	char current, next;
+
+	/* loop through the line until reaching the null term */
+	for (i = 0; line[i]; i++)
+	{
+		current = line[i]; /* assign the current char to current */
+		next = line[i + 1]; /*assign the next to next */
+		if (current == '#' && (i == 0 || line[i - 1] == ' '))
+		{
+			line[i] = '\0'; /* replace it will null term */
+			break;
+		}
+		else if (current == ';')
+		{
+			if ((next == ';' || line[i - 1] == ';')
+					&& line[i - 1] != ' ' && next != ' ')
+				new_len += 2;
+			else
+				new_len += (line[i - 1] != ' ') + (next != ' ');
+		}
+		else
+			logical_ops(&line[i], &new_len);
+		new_len++;
+	}
+
+	return (new_len);
+}
+
