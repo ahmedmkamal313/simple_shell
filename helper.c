@@ -92,3 +92,51 @@ ssize_t get_new_len(char *line)
 	return (new_len);
 }
 
+/**
+ * handle_line - a line read from std input.
+ * @line:: pointer to a line read.
+ * @read: the length of the line.
+ */
+
+void handle_line(char **line, ssize_t read)
+{
+	char *old_line, *new_line, current, next;
+	size_t i, j;
+	ssize_t new_len;
+
+	new_len = get_new_len(*line);
+	if (new_len == read - 1)
+		return;
+	new_line = malloc(new_len + 1);
+	if (!new_line)
+		return;
+	j = 0;
+	for (i = 0; old_line[i]; i++)
+	{
+		current = old_line[i];
+		next = old_line[i + 1];
+		if (current == ';')
+		{
+			if ((next == ';' || old_line[i - 1] == ';')
+					&& old_line[i - 1] != ' ' && next != ' ')
+				new_line[j++] = ' ';
+			else
+				j += (old_line[i - 1] != ' ') + (next != ' ');
+			new_line[j++] = ';';
+		}
+		else if (current == '&' || current == '|')
+		{
+			if ((next == current || old_line[i - 1] == current)
+					&& old_line[i - 1] != ' ' && next != ' ')
+				new_line[j++] = ' ';
+			else
+				j += (old_line[i - 1] == current) + (next == current);
+			newline[j++] = current;
+		}
+		else
+			new_line[j++] = current;
+	}
+	new_line[j] = '\0';
+	free(*line);
+	*line = new_line;
+}
