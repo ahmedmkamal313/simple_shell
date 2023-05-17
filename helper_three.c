@@ -29,13 +29,72 @@ char *get_args(char *line, int *exe_ret)
 			write(STDOUT_FILENO, prompt, 2);
 		return (get_args(line, exe_ret));
 	}
-
 	/*Replace the newline character with a null terminator.*/
 	line[read - 1] = '\0';
 	/*Replace any variables in the line with their >>.*/
 	variable_replacement(&line, exe_ret);
 	/*Handle any special characters or commands in the line.*/
 	handle_line(&line, read);
-
 	return (line); /*Return the modified line.*/
+}
+
+/**
+ * call_args - partition operators from commands and calls them.
+ * @front: the beginning of the array.
+ * @exe_ret: the value of executed command.
+ * @args: the argument of array
+ * Return: the return value
+ */
+
+int call_args(char **args, char **front, int *exe_ret)
+{
+	int ret = 0;
+	int index = 0;
+
+	if (args == NULL)
+	{
+		return (*exe_ret);
+	}
+	while (args[index] != NULL)
+	{
+		if (strncmp(args[index], "||", 2) == 0)
+		{
+			free(args[index]);
+			args[index] = NULL;
+			args = replace_aliases(args);
+			args = run_args(args, front, exe_ret);
+
+			if (*exe_ret != 0)
+			{
+				args = &args[++index];
+				index = 0;
+			}
+			else
+			{
+				for (index++; args[index]; index++)
+					free(args[index]);
+				return (ret);
+			}
+		}
+		else if (strncmp(args[index], "&&", 2) == 0)
+		{
+			free(args[index]);
+			args[index] = NULL;
+			ret = run_args(args, front, exe_ret);
+			if (*exe_ret != 0)
+				args = &args[++index];
+			index = 0;
+			else
+			{
+				for (index++; args[index]; index++)
+					free(args[index]);
+				return (ret);
+			}
+		}
+		index++;
+	}
+
+	args = replace_aliases(args);
+	ret = run_args(args, front, exe_ret);
+	return (ret);
 }
