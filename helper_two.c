@@ -75,3 +75,76 @@ char *get_env_value(char *beginning, int length)
 
 	return (replacement);
 }
+
+/**
+ * variable_replacement - variable replacer
+ * @line: a double pointer containing the command
+ * @exe_ret: return value
+ */
+
+void variable_replacement(char **line, int *exe_ret)
+{
+	int i, start = 0, size;
+	char *substitute = NULL, *old_input = NULL, *new_input;
+
+	old_input = *line;
+	for (i = 0; old_input[i]; i++)
+	{
+		if (old_input[i] == '$' && old_input[i + 1] && old_input[i + 1] != ' ')
+		{
+			substitute = get_substitute(old_input, exe_ret, &i, &start);
+			new_input = malloc(i + _strlen(substitute) +
+					_strlen(&old_input[start]) + 1);
+			if (!input)
+			return;
+			new_input[0] = '\0';
+			_strncat(new_input, old_input, i);
+			if (substitute)
+			{
+				_strcat(new_input, substitute);
+				free(substitute);
+				substitute = NULL;
+			}
+			_strcat(new_input, &old_input[start]);
+			free(old_input);
+			*line = new_input;
+			old_input  = new_input;
+			i = -1;
+		}
+	}
+}
+
+/**
+ * get_substitute - returns a substitute string for a variable in the input
+ * @old_input: the original input string
+ * @exe_ret: the execution return value
+ * @i: the index of the '$' character in the input
+ * @start: the index of the next character after the variable name in the input
+ * Return: a pointer to the substitute string, or NULL if none
+ */
+
+char *get_substitute(char *old_input, int *exe_ret, int *i, int *start)
+{
+	char *substitute = NULL;
+	int size;
+
+	if (old_input[*i + 1] == '$')
+	{
+		substitute = get_pid();
+		*start = *i + 2;
+	}
+	else if (old_input[*i + 1] == '?')
+	{
+		substitute = _itoa(*exe_ret);
+		*start = *i + 2;
+	}
+	else if (old_input[*i + 1])
+	{
+		for (*start = *i + 1; old_input[*start] && old_input[*start] != '$' &&
+				old_input[*start] != ' '; (*start)++)
+			;
+		size = *start - (*i + 1);
+		substitute = get_env_value(&old_input[*i + 1], size);
+	}
+	return (substitute);
+}
