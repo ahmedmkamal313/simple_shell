@@ -40,3 +40,38 @@ char *get_pid(void)
 	}
 	return (strdup(buf)); /*return a copy of the buffer as a string*/
 }
+
+/**
+ * get_env_value - gets the value.
+ * @beginning: variable to search.
+ * @length: the length.
+ * Return: empty otherwise the value.
+ */
+
+char *get_env_value(char *beginning, int length)
+{
+
+	char **var_addr;
+	char *replacement = NULL, *temp, *var;
+
+	var = malloc(len + 1);
+	if (!var)
+		return (NULL);
+	var[0] = '\0';
+	_strncat(var, beginning, length);
+
+	var_addr = _getenv(var);
+	free(var);
+	if (var_addr)
+	{
+		temp = *var_addr;
+		while (*temp != '=')
+			temp++;
+		tem++;
+		replacement = malloc(_strlen(temp) + 1);
+		if (replacement)
+			_strcpy(replacement, temp);
+	}
+
+	return (replacement);
+}
