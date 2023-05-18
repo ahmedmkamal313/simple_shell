@@ -80,3 +80,35 @@ int handle_args(int *exe_ret)
 	return (*exe_ret);
 }
 
+/**
+ * run_args - runs the arguments passed to a shell
+ * command and returns the result.
+ * @args: the argument of the array.
+ * @front: the beginning of the array.
+ * @exe_ret: the value of executed command.
+ * Return: the final return value.
+ */
+
+int run_args(char **args, char **front, int *exe_ret)
+{
+	int ret = 0;
+	int i;
+
+	void (*builtin)(char **args, char **front) = get_builtin(args[0]);
+
+	if (builtin)
+	{
+		builtin(args + 1, front);
+		*exe_ret = EXIT_SUCCESS;
+	}
+	else
+	{
+		*exe_ret = system(args[0]);
+		ret = *exe_ret;
+	}
+
+	for (i = 0; args[i] != NULL; i++)
+		free(args[i]);
+
+	return (ret);
+}
