@@ -58,3 +58,53 @@ int count_tokens(char *str, char *delim)
 	return (num_tokens);
 }
 
+/**
+ * _strtok -  This function takes a string and a delimiter
+ * character as arguments and returns an array of tokens in the string.
+ * @line: the string buffer to start the command.
+ * @delim: the delimiter character.
+ * Return: the array of tokens.
+ */
+
+char **_strtok(char *line, char *delim)
+{
+	char **tokens;
+	int i;
+	int index = 0, numTokens = 0, tokenIndex = 0, letterIndex = 0;
+
+	numTokens = count_tokens(line, delim);
+
+	if (numTokens == 0)
+		tokens = (char **)malloc((numTokens + 2) * sizeof(char *));
+	if (tokens == NULL)
+		return (NULL);
+
+	while (tokenIndex < numTokens)
+	{
+		while (line[index] == *delim)
+			index++;
+		int tokenlen = token_len(line, delin, index);
+
+		tokens[tokenIndex] = (char *)malloc((tokenLen + 1)sizeof(char));
+
+		if (tokens[tokenIndex] == NULL)
+		{
+			for (i = 0; i < tokenIndex; i++)
+				free(tokens[i]);
+				free(tokens);
+				return (NULL);
+		}
+		while (letterIndex < tokenLen)
+		{
+			tokens[tokenIndex][letterIndex] = line[index];
+			index++;
+			letterIndex++;
+		}
+		tokens[tokenIndex][letterIndex] = '';
+		letterIndex = 0;
+		tokenIndex++;
+	}
+	tokens[tokenIndex] = NULL;
+	tokens[tokenIndex + 1] = NULL;
+	return (tokens);
+}
