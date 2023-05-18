@@ -30,7 +30,7 @@ int token_len(char *str, char *delim)
 
 int count_tokens(char *str, char *delim)
 {
-	int index = 0;
+	int index;
 	int num_tokens = 0;
 	int len = 0;
 
@@ -42,17 +42,15 @@ int count_tokens(char *str, char *delim)
 
 	index = 0;
 
-	(index < len)
+	while (index < len)
 	{
 		if (str[index] != *delim)
 		{
 			num_tokens++;
 			index += token_len(str + index, delim);
 		}
-		else
-		{
+
 			index++;
-		}
 	}
 
 	return (num_tokens);
@@ -71,20 +69,21 @@ char **_strtok(char *line, char *delim)
 	char **tokens;
 	int i;
 	int index = 0, numTokens = 0, tokenIndex = 0, letterIndex = 0;
+	int tokenlen;
 
 	numTokens = count_tokens(line, delim);
 
 	if (numTokens == 0)
-		tokens = (char **)malloc((numTokens + 2) * sizeof(char *));
+		return (NULL);
+	tokens = malloc((numTokens + 2) * sizeof(char *));
+
 	if (tokens == NULL)
 		return (NULL);
-
 	while (tokenIndex < numTokens)
 	{
 		while (line[index] == *delim)
 			index++;
-		int tokenlen = token_len(line, delin, index);
-
+		tokenlen = token_len(line, delim, index);
 		tokens[tokenIndex] = (char *)malloc((tokenLen + 1)sizeof(char));
 
 		if (tokens[tokenIndex] == NULL)
