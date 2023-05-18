@@ -1,6 +1,41 @@
 #include "main.h"
 
 /**
+ * _getenv - takes a string as an argument and return a pointer
+ * @var: the name.
+ * Return: NULL if no match is found
+ * pointer to the environment variable that matches the string
+ */
+
+char **_getenv(const char *var)
+{
+	/* Declare two variables to store the index and length of the array */
+	int index, length;
+
+	/* Call the _strlen function to get the length of the string */
+	length = _strlen(var);
+	/* Loop through the environ array*/
+	for (index = 0; environ[index]; index++)
+	{
+		if (_strncmp(var, environ[index], len) == 0)
+			return (&environ[index]);
+	}
+	return (NULL);
+}
+
+/**
+ * free_env - free the memory allocated
+ */
+void free_env(void)
+{
+	int index; /* declare a variable to store index of the array */
+	/* lop through the array */
+	for (index = 0; environ[index]; index++)
+		free(environ[index]); /* free each string*/
+	free(environ) /*free the array */
+}
+
+/**
  * _copyenv - copy the environment variable from the global variable
  * Return: new array of strings with the same values
  * NULL if memory allocation fails
