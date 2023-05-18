@@ -50,30 +50,39 @@ char *get_pid(void)
 
 char *get_env_value(char *beginning, int length)
 {
-
+	/* A pointer to store the address of the environment variable */
 	char **var_addr;
+	/**
+	 * Three pointers to store the value of the environment variable,
+	 * a temporary pointer and a copy of the variable name
+	 */
 	char *replacement = NULL, *temp, *var;
 
+	/* Allocate memory for the copy of the variable name */
 	var = malloc(len + 1);
 	if (!var)
-		return (NULL);
-	var[0] = '\0';
+		return (NULL); /*Return NULL if allocation fails*/
+	var[0] = '\0'; /* Initialize the copy to an empty string */
+	/* Concatenate the variable name to the copy */
 	_strncat(var, beginning, length);
 
+	/* Get the address of the environment variable that matches the copy */
 	var_addr = _getenv(var);
-	free(var);
-	if (var_addr)
+	free(var); /*Free the copy*/
+	if (var_addr)/*If the address is not NULL*/
 	{
-		temp = *var_addr;
-		while (*temp != '=')
-			temp++;
-		tem++;
+		temp = *var_addr; /* Set the temporary pointer to point to the address*/
+		while (*temp != '=') /*Loop until reaching the equal sign*/
+			temp++; /*Move to the next character*/
+		tem++; /*Move past the equal sign*/
+		/* Allocate memory for the value of the environment variable */
 		replacement = malloc(_strlen(temp) + 1);
 		if (replacement)
+			/* Copy the value to the replacement pointer */
 			_strcpy(replacement, temp);
 	}
 
-	return (replacement);
+	return (replacement);/*Return the replacement pointer or NULL if not found*/
 }
 
 /**
@@ -84,32 +93,44 @@ char *get_env_value(char *beginning, int length)
 
 void variable_replacement(char **line, int *exe_ret)
 {
+	/**
+	 * Three variables to store the loop index,
+	 * the start index and the size of the line
+	 */
 	int i, start = 0, size;
+	/**
+	 * Three pointers to store the substitute value,
+	 * the old input line and the new input line
+	 */
 	char *substitute = NULL, *old_input = NULL, *new_input;
 
-	old_input = *line;
+	old_input = *line; /*Set the old input pointer to point to the line*/
+	/*Loop through all the characters in the old input*/
 	for (i = 0; old_input[i]; i++)
 	{
 		if (old_input[i] == '$' && old_input[i + 1] && old_input[i + 1] != ' ')
 		{
+			/*Get the substitute value for the variable name after the dollar sign*/
 			substitute = get_substitute(old_input, exe_ret, &i, &start);
+			/*Allocate memory for the new input line*/
 			new_input = malloc(i + _strlen(substitute) +
 					_strlen(&old_input[start]) + 1);
 			if (!input)
-			return;
-			new_input[0] = '\0';
+			return; /*Return if allocation fails*/
+			new_input[0] = '\0'; /*Initialize the new input to an empty string*/
 			_strncat(new_input, old_input, i);
-			if (substitute)
+			if (substitute) /*If there is a substitute value*/
 			{
+				/*Concatenate the substitute value to the new input*/
 				_strcat(new_input, substitute);
-				free(substitute);
-				substitute = NULL;
+				free(substitute); /*Free the substitute pointer*/
+				substitute = NULL; /*Set it to NULL*/
 			}
 			_strcat(new_input, &old_input[start]);
-			free(old_input);
-			*line = new_input;
-			old_input  = new_input;
-			i = -1;
+			free(old_input); /*Free the old input pointer*/
+			*line = new_input; /* Set the line pointer to point to the new input*/
+			old_input  = new_input; /*Set the old input to point to the new input*/
+			i = -1; /*Reset the loop index*/
 		}
 	}
 }
@@ -130,20 +151,22 @@ char *get_substitute(char *old_input, int *exe_ret, int *i, int *start)
 
 	if (old_input[*i + 1] == '$')
 	{
-		substitute = get_pid();
+		substitute = get_pid(); /*get the process ID as a string*/
 		*start = *i + 2;
 	}
 	else if (old_input[*i + 1] == '?')
 	{
-		substitute = _itoa(*exe_ret);
+		substitute = _itoa(*exe_ret); /*get the exit status of last command */
 		*start = *i + 2;
 	}
 	else if (old_input[*i + 1])
 	{
+		/* find the end of the environment variable name */
 		for (*start = *i + 1; old_input[*start] && old_input[*start] != '$' &&
 				old_input[*start] != ' '; (*start)++)
 			;
 		size = *start - (*i + 1);
+		/* get the value of the environment variable */
 		substitute = get_env_value(&old_input[*i + 1], size);
 	}
 	return (substitute);
