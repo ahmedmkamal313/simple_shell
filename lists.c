@@ -18,3 +18,21 @@ void free_list(list_t *head)
 	}
 }
 
+/**
+ * free_alials_list - free a alias lined list.
+ * @head: the head of the list.
+ */
+
+void free_alias_list(alias_t *head)
+{
+	alias_t *next; /* a pointer t ostore the next alias */
+
+	while (head) /* loop until the list is empty */
+	{
+		next = head->next; /* save tje mext alias*/
+		free(head->name); /* free the alias name */
+		free(head->value); /* free alias value */
+		free(head); /* free the current */
+		head = next; /* move to the next */
+	}
+}
