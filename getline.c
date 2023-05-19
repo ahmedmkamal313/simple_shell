@@ -102,3 +102,37 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	/* Return number of bytes read */
 	return (b + 1);
 }
+
+/**
+ * assign_lineptr - reassign the lineptr variable.
+ * @lineptr: buffer to store input.
+ * @n: the size.
+ * @buffer: the string to be assigned.
+ * @b: the size of buffer.
+ */
+
+void assign_lineptr(char **lineptr, size_t *n, char *buffer, size_t b)
+{
+	if (*lineptr == NULL)
+	{
+		if (b > 120)
+			*n = b;
+		else
+			*n = 120;
+		*lineptr = buffer;
+	}
+	else if (*n < b)
+	{
+		if (b > 120)
+			*n = b;
+		else
+			*n = 120;
+		*lineptr = buffer;
+	}
+	else
+	{
+		_strcpy(*lineptr, buffer);
+		free(buffer);
+	}
+}
+
