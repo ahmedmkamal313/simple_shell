@@ -19,7 +19,7 @@ void free_list(list_t *head)
 }
 
 /**
- * free_alials_list - free a alias lined list.
+ * free_alias_list - free a alias lined list.
  * @head: the head of the list.
  */
 
