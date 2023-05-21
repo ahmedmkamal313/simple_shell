@@ -26,3 +26,18 @@ void help_env(void)
 
 	write(STDOUT_FILENO, msg, _strlen(msg));
 }
+
+/**
+ * help_setenv - Displays information on the shellby builtin command 'setenv'.
+ */
+
+void help_setenv(void)
+{
+	char *msg = "setenv: setenv [VARIABLE] [VALUE]\n\tInitializes a new";
+
+	write(STDOUT_FILENO, msg, _strlen(msg));
+	msg = "environment variable, or modifies an existing one.\n\n";
+	write(STDOUT_FILENO, msg, _strlen(msg));
+	msg = "\tUpon failure, prints a message to stderr.\n";
+	write(STDOUT_FILENO, msg, _strlen(msg));
+}
