@@ -80,3 +80,45 @@ int shellby_setenv(char **args, char __attribute__((__unused__)) **front)
 	environ[index + 1] = NULL;
 	return (0); /* return 0 on success */
 }
+
+/**
+ * shellby_unsetenv - removes an environment variable
+ * from the shell environment.
+ * @args: array of arguments.
+ * @front: pointer to the beginning of args.
+ * Return: -1 if error , 0.
+ */
+int shellby_unsetenv(char **args, char __attribute__((__unused__)) **front)
+{
+	char **env_var, **new_environ;
+	size_t size;
+	int index, index2;
+
+	/*if no argument is given, return an error*/
+	if (!args[0])
+		return (create_error(args, -1));
+	env_var = _getenv(args[0]); /*get pointer to the env var to be removed*/
+	if (!env_var) /*if the variable does not exist, return 0*/
+		return (0);
+	/* count the number of environment variables*/
+	for (size = 0; environ[size]; size++)
+		;
+	new_environ = malloc(sizeof(char *) * size);
+	if (!new_environ) /*if allocation fails, return an error*/
+		return (create_error(args, -1));
+	for (index = 0, index2 = 0; environ[index]; index++)
+	{
+		if (*env_var == environ[index])
+		{
+			free(*env_var);
+			continue;
+		}
+		new_environ[index2] = environ[index];
+		index2++; /* increment the new array index */
+	}
+	free(environ); /*free the old environment array*/
+	environ = new_environ;
+	environ[size - 1] = NULL;
+
+	return (0);
+}
