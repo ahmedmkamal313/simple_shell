@@ -66,3 +66,20 @@ void help_cd(void)
 	msg = "after a change of directory.\n";
 	write(STDOUT_FILENO, msg, _strlen(msg));
 }
+
+/**
+ * help_exit - Displays information on the shellby builtin command 'exit'.
+ */
+
+void help_exit(void)
+{
+	char *msg = "exit: exit [STATUS]\n\tExits the shell.\n\n\tThe ";
+
+	write(STDOUT_FILENO, msg, _strlen(msg));
+	msg = "STATUS argument is the integer used to exit the shell.";
+	write(STDOUT_FILENO, msg, _strlen(msg));
+	msg = " If no argument is given, the command is interpreted as";
+	write(STDOUT_FILENO, msg, _strlen(msg));
+	msg = " exit 0.\n";
+	write(STDOUT_FILENO, msg, _strlen(msg));
+}
