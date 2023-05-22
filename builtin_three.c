@@ -41,6 +41,7 @@ int shellby_setenv(char **args, char __attribute__((__unused__)) **front)
 {
 	/* pointers to the env variable new env array and the new value */
 	char **env_var == NULL, **new_environ, *new_value;
+
 	size_t size;/* the size of the current enviroment */
 	int index; /* loop variable */
 
