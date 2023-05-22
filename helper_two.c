@@ -59,7 +59,7 @@ char *get_env_value(char *beginning, int length)
 	char *replacement = NULL, *temp, *var;
 
 	/* Allocate memory for the copy of the variable name */
-	var = malloc(len + 1);
+	var = malloc(length + 1);
 	if (!var)
 		return (NULL); /*Return NULL if allocation fails*/
 	var[0] = '\0'; /* Initialize the copy to an empty string */
@@ -74,7 +74,7 @@ char *get_env_value(char *beginning, int length)
 		temp = *var_addr; /* Set the temporary pointer to point to the address*/
 		while (*temp != '=') /*Loop until reaching the equal sign*/
 			temp++; /*Move to the next character*/
-		tem++; /*Move past the equal sign*/
+		temp++; /*Move past the equal sign*/
 		/* Allocate memory for the value of the environment variable */
 		replacement = malloc(_strlen(temp) + 1);
 		if (replacement)
@@ -97,7 +97,7 @@ void variable_replacement(char **line, int *exe_ret)
 	 * Three variables to store the loop index,
 	 * the start index and the size of the line
 	 */
-	int i, start = 0, size;
+	int i, start = 0;
 	/**
 	 * Three pointers to store the substitute value,
 	 * the old input line and the new input line
@@ -115,8 +115,8 @@ void variable_replacement(char **line, int *exe_ret)
 			/*Allocate memory for the new input line*/
 			new_input = malloc(i + _strlen(substitute) +
 					_strlen(&old_input[start]) + 1);
-			if (!input)
-			return; /*Return if allocation fails*/
+			if (!line)
+				return; /*Return if allocation fails*/
 			new_input[0] = '\0'; /*Initialize the new input to an empty string*/
 			_strncat(new_input, old_input, i);
 			if (substitute) /*If there is a substitute value*/

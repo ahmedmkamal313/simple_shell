@@ -17,7 +17,7 @@ char **_getenv(const char *var)
 	/* Loop through the environ array*/
 	for (index = 0; environ[index]; index++)
 	{
-		if (_strncmp(var, environ[index], len) == 0)
+		if (_strncmp(var, environ[index], lengeth) == 0)
 			return (&environ[index]);
 	}
 	return (NULL);
@@ -32,7 +32,7 @@ void free_env(void)
 	/* lop through the array */
 	for (index = 0; environ[index]; index++)
 		free(environ[index]); /* free each string*/
-	free(environ) /*free the array */
+	free(environ); /*free the array */
 }
 
 /**
@@ -58,7 +58,7 @@ char **_copyenv(void)
 	 * Allocate memory for the new array with enough space for
 	 * the strings and a NULL pointer
 	 */
-	new_env = malloc(size(char *) * (env_size + 1));
+	new_env = malloc(sizeof(char *) * (env_size + 1));
 	if (!new_env) /* if memory allocation fails */
 		return (NULL);
 
