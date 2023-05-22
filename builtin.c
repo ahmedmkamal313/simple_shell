@@ -99,7 +99,7 @@ int shellby_help(char **args, char __attribute__((__unused__)) **front)
 	else if (_strcmp(args[0], "help") == 0)
 		help_help();
 	else
-		write(STDERR_FILENO, name, _strlen(name));
+		write(STDERR_FILENO, program_name, _strlen(program_name));
 
 	return (0);
 }

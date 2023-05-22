@@ -24,7 +24,7 @@ int shellby_alias(char **args, char __attribute__((__unused__)) **front)
 	}
 	for (i = 0; args[i]; i++)
 	{
-		remp = aliases;
+		temp = aliases;
 		value = _strchr(args[i], '='); /*find equal sign in arg*/
 		if (!value)
 		{
@@ -35,7 +35,7 @@ int shellby_alias(char **args, char __attribute__((__unused__)) **front)
 					print_alias(temp);/* print the matching alias*/
 					break;
 				}
-				temp = temo->next; /*move to the next alias */
+				temp = temp->next; /*move to the next alias */
 			}
 			if (!temp)
 				ret = create_error(args + i, 1);
