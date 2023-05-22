@@ -43,3 +43,15 @@ int shellby_cd(char **args, char __attribute__((__unused__)) **front)
 	free(pwd);
 	return (0);
 }
+
+/**
+ * is_dash - checks if a string is a dash or a double dash.
+ * @arg: the string to check.
+ * Return: 1 if arg is "-" or "--", 0 otherwise.
+ */
+
+int is_dash(char *arg)
+{
+	return ((*(arg) == '-' || _strcmp(arg, "--") == 0) &&
+		((arg[1] == '-' && arg[2] == '\0') || arg[1] == '\0'));
+}
