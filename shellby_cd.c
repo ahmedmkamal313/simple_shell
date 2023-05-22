@@ -66,3 +66,16 @@ void chdir_to_oldpwd(void)
 	if (_getenv("OLDPWD") != NULL)
 		chdir(*_getenv("OLDPWD") + 7);
 }
+
+/**
+ * is_valid_dir - check if a string is valid directory.
+ * @arg: the string to check
+ * @dir: a pointer to a stract stat to store the file information.
+ * Return: 1 if arg is a valid directory, 0 otherwise.
+ */
+
+int is_valid_dir(char *arg, struct stat *dir)
+{
+	return (stat(arg, dir) == 0 && S_ISDIR(dir->st_mode) &&
+			((dir->st_mode & S_IXUSR) != 0));
+}
