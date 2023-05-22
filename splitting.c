@@ -88,12 +88,12 @@ char **_strtok(char *line, char *delim)
 
 		if (tokens[tokenIndex] == NULL)
 		{
-			for (i = 0; i < tokenindex; i++)
+			for (i = 0; i < tokenIndex; i++)
 				free(tokens[i]);
 			free(tokens);
 			return (NULL);
 		}
-		while (letterindex < tokenlen)
+		while (letterindex < tokenLen)
 		{
 			tokens[tokenIndex][letterIndex] = line[index];
 			index++;
