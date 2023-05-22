@@ -22,7 +22,7 @@ list_t *add_node_end(list_t **head, char *dir)
 		last = *head;
 		while (last->next != NULL) /* loop until the last node*/
 			last = last->next; /* move to next node */
-		last->next = new_noce; /* link last node to new node */
+		last->next = new_node; /* link last node to new node */
 	}
 	else
 		/* if the list is empty, set the head to new node */
@@ -48,7 +48,7 @@ alias_t *add_alias_end(alias_t **head, char *name, char *value)
 		return (NULL);
 	new_node->next = NULL; /* set the next to NULL */
 	/* Allocate memory for the alias name */
-	new_node->name = malloc(size(char) * (_strlen(name) + 1));
+	new_node->name = malloc(sizeof(char) * (_strlen(name) + 1));
 	if (!new_node->name) /* Check if memory allocation failed */
 	{
 		free(new_node); /* free te nea alias */

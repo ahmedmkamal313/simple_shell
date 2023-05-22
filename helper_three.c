@@ -25,7 +25,7 @@ char *get_args(char *line, int *exe_ret)
 	if (read == 1) /*if line is empty ( read == 1).*/
 	{
 		(*exe_ret)++;
-		if (isatty(STDIN_FILEDO)) /*f (isatty(STDIN_FILENO)).*/
+		if (isatty(STDIN_FILENO)) /*f (isatty(STDIN_FILENO)).*/
 			write(STDOUT_FILENO, prompt, 2);
 		return (get_args(line, exe_ret));
 	}

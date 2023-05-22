@@ -12,7 +12,7 @@ void sig_handler(int sig)
 
 	(void)sig; /* to avoid unused variable warning */
 
-	signal(SIGINT, si_handler); /*This is to reset the signal handler */
+	signal(SIGINT, sig_handler); /*This is to reset the signal handler */
 	write(STDIN_FILENO, new_prompt, 3); /*this is to print a new prompt */
 }
 
