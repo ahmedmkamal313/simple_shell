@@ -82,6 +82,8 @@ int handle_operators(char **args, char **front, int *exe_ret, int *index)
 {
 	if (strncmp(args[*index], "||", 2) == 0)
 	{
+		int ret;
+
 		free(args[*index]);
 		args[*index] = NULL;
 		args = replace_aliases(args);
@@ -103,7 +105,7 @@ int handle_operators(char **args, char **front, int *exe_ret, int *index)
 	{
 		free(args[*index]);
 		args[*index] = NULL;
-		int ret = run_args(args, front, exe_ret);
+		ret = run_args(args, front, exe_ret);
 
 		if (*exe_ret != 0)
 			args = &args[++(*index)];

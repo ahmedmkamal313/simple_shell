@@ -79,14 +79,16 @@ int proc_file_commands(char *file_path, int *exe_ret)
 {
 	char *line, **args, **front;
 	int line_size, ret;
+	int i;
 
 	history = 0;
 	line_size = read_file(file_path, &line, exe_ret);
 	if (line_size == -1)
 		return (-1);
-	for (int i = 0; line[i] == '\n'; i++)
+
+	for (i = 0; line[i] == '\n'; i++)
 		line[i] = ' ';
-	for (int i = 0; i < line_size; i++)
+	for (i = 0; i < line_size; i++)
 		line[i] = (line[i] == '\n') ? ';' : line[i];
 	variable_replacement(&line, exe_ret);
 	handle_line(&line, line_size);
@@ -95,7 +97,7 @@ int proc_file_commands(char *file_path, int *exe_ret)
 	if (!args || check_args(args) != 0)
 		return (*exe_ret = 2);
 	front = args;
-	for (int i = 0; args[i]; i++)
+	for (i = 0; args[i]; i++)
 	{
 		if (_strncmp(args[i], ";", 1) == 0)
 		{

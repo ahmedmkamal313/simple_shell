@@ -93,7 +93,7 @@ char **_strtok(char *line, char *delim)
 			free(tokens);
 			return (NULL);
 		}
-		while (letterindex < tokenLen)
+		while (letterIndex < tokenlen)
 		{
 			tokens[tokenIndex][letterIndex] = line[index];
 			index++;
