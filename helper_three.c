@@ -80,10 +80,10 @@ int call_args(char **args, char **front, int *exe_ret)
 
 int handle_operators(char **args, char **front, int *exe_ret, int *index)
 {
-	if (strncmp(args[*index], "||", 2) == 0)
-	{
-		int ret;
+	int ret;
 
+	if (_strncmp(args[*index], "||", 2) == 0)
+	{
 		free(args[*index]);
 		args[*index] = NULL;
 		args = replace_aliases(args);
@@ -101,15 +101,17 @@ int handle_operators(char **args, char **front, int *exe_ret, int *index)
 			return (0);
 		}
 	}
-	else if (strncmp(args[*index], "&&", 2) == 0)
+	else if (_strncmp(args[*index], "&&", 2) == 0)
 	{
 		free(args[*index]);
 		args[*index] = NULL;
 		ret = run_args(args, front, exe_ret);
 
 		if (*exe_ret != 0)
+		{
 			args = &args[++(*index)];
-		 *index = 0;
+			*index = 0;
+		}
 		else
 		{
 			for ((*index)++; args[*index]; (*index)++)
