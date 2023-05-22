@@ -16,7 +16,7 @@ int num_len(int num)
 	{
 		length++; /*Otherwise, assign num to num1.*/
 
-		num1 = num * -1 /* make num1 positive.*/
+		num1 = num * -1; /* make num1 positive.*/
 	}
 	else
 	{
@@ -74,7 +74,7 @@ char *_itoa(int num)
 		buffer[length] = (num1 % 10) + '0';
 		num1 /= 10; /*Divide num1 by 10 to remove the last digit.*/
 		length--; /*Decrement len to move to the previous character.*/
-	} while (num1 > 0)
+	} while (num1 > 0);
 
-	return (buffer)
+	return (buffer);
 }

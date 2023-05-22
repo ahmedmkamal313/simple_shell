@@ -83,23 +83,23 @@ char **_strtok(char *line, char *delim)
 	{
 		while (line[index] == *delim)
 			index++;
-		tokenlen = token_len(line, delim, index);
-		tokens[tokenIndex] = (char *)malloc((tokenLen + 1)sizeof(char));
+		tokenlen = token_len(line + index, delim);
+		tokens[tokenIndex] = malloc(sizeof(char) * (tokenlen + 1));
 
 		if (tokens[tokenIndex] == NULL)
 		{
-			for (i = 0; i < tokenIndex; i++)
+			for (i = 0; i < tokenindex; i++)
 				free(tokens[i]);
-				free(tokens);
-				return (NULL);
+			free(tokens);
+			return (NULL);
 		}
-		while (letterIndex < tokenLen)
+		while (letterindex < tokenlen)
 		{
 			tokens[tokenIndex][letterIndex] = line[index];
 			index++;
 			letterIndex++;
 		}
-		tokens[tokenIndex][letterIndex] = '';
+		tokens[tokenIndex][letterIndex] = ' ';
 		letterIndex = 0;
 		tokenIndex++;
 	}
