@@ -1,10 +1,27 @@
 #include "main.c"
 
+/**
+ * clean_up - cleans up the memory allocated for
+ * the environment variables and the alias list
+ * Return: nothing
+ *
+ * Description: This function calls free_env and free_alias_list
+ */
+
 void clean_up(void)
 {
 	free_env();
 	free_alias_list(aliases);
 }
+
+/**
+ * handle_interactive - handles the interactive mode of the shell
+ * @exe_ret: a pointer to an int that stores the execution return value
+ * Return: the return value
+ *
+ * Description: This function loops until the end of file
+ * or exit and writes a prompt and calls handle_args
+ */
 
 int handle_interactive(int *exe_ret)
 {
@@ -23,8 +40,17 @@ int handle_interactive(int *exe_ret)
 		}
 	}
 
-	return ret;
+	return (ret);
 }
+
+/**
+ * handle_non_interactive - handles the non-interactive mode of the shell
+ * @exe_ret: a pointer to an int that stores the execution return value
+ * Return: the return value
+ *
+ * Description: This function loops until
+ * the end of file or exit and calls handle_args
+ */
 
 int handle_non_interactive(int *exe_ret)
 {
@@ -33,8 +59,20 @@ int handle_non_interactive(int *exe_ret)
 	while (ret != END_OF_FILE && ret != EXIT)
 		ret = handle_args(exe_ret);
 
-	return ret;
+	return (ret);
 }
+
+/**
+ * main - the main function of a shell program
+ * @argc: the number of arguments
+ * @argv: the array of arguments
+ * Return: the execution return value
+ *
+ * Description: This function initializes some global variables,
+ * registers a signal handler,
+ * copies the environment variables,
+ * and handles different modes of input
+ */
 
 int main(int argc, char *argv[])
 {
