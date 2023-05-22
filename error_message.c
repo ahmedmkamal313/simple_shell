@@ -74,7 +74,7 @@ char *error_1(char **args)
 }
 
 /**
- * error_126 - create an error.
+ * _error_126 - create an error.
  * @args: array passed to the command.
  * Return: the error.
  */
@@ -83,7 +83,7 @@ char *_error_126(char **args)
 {
 	char *error_msg, *history_str;
 	int error_len;
-	
+
 	/* convert the history number to a string */
 	history_str = _itoa(history);
 	if (!history_str)
@@ -112,7 +112,7 @@ char *_error_126(char **args)
 
 /**
  * error_127 - creates an error message.
- * args: array passsed to the command.
+ * @args: array passsed to the command.
  * Return: the error.
  */
 
