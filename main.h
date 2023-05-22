@@ -62,7 +62,7 @@ alias_t *aliases;
 extern char **environ;
 
 /* Global program name */
-char *progra_name;
+char *program_name;
 
 /* Global history counter */
 int history;
