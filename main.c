@@ -1,4 +1,4 @@
-#include "main.c"
+#include "main.h"
 
 /**
  * clean_up - cleans up the memory allocated for
