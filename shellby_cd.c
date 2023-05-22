@@ -55,3 +55,14 @@ int is_dash(char *arg)
 	return ((*(arg) == '-' || _strcmp(arg, "--") == 0) &&
 		((arg[1] == '-' && arg[2] == '\0') || arg[1] == '\0'));
 }
+
+/**
+ * chdir_to_oldpwd - change the current wokring directory to the previous one.
+ * Return: nothing.
+ */
+
+void chdir_to_oldpwd(void)
+{
+	if (_getenv("OLDPWD") != NULL)
+		chdir(*_getenv("OLDPWD") + 7);
+}
