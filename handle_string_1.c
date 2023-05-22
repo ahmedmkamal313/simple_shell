@@ -40,7 +40,7 @@ int _strlen(char *str)
  * _is_included - helper function that checks
  * if a character is in a string.
  * @letter: the character to be check.
- * @*prefix: the string to be check.
+ * @prefix: the string to be check.
  * Return: 0.
  */
 
