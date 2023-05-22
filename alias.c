@@ -84,3 +84,30 @@ void set_alias(char *var_name, char *value)
 		/*  Add a new alias to the end of the list*/
 		add_alias_end(&aliases, var_name, new_value);
 }
+
+/**
+ * print_alias -  prints an alias in the format name='value'\n
+ * @alias: a pointer to an alias_t struct
+ */
+
+void print_alias(alias_t *alias)
+{
+	char *alias_string; /* A pointer to store the formatted alias string */
+	int len =  _strlen(alias->name) + _strlen(alias->value) + 4;
+
+	alias_string = malloc(sizeof(char) * (len + 1));
+	if (!alias_string) /* Check if memory allocation faild */
+		return; /* exit */
+	/*Copy the name of the alias to the alias string*/
+	_strcpy(alias_string, alias->name);
+	/*Append an equal sign and a single quote to the alias string*/
+	_strcat(alias_string, "='");
+	/*Append the value of the alias to the alias string*/
+	_strcat(alias_string, alias->value);
+	/*Append a single quote and a newline to the alias string*/
+	_strcat(alias_string, "'\n");
+
+	/* Write the alias string to the standard output*/
+	write(STDOUT_FILENO, alias_string, len);
+	free(alias_string); /*Free the memory allocated for the alias string*/
+}
