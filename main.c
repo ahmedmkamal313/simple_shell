@@ -1,124 +1,16 @@
-#include "main.h"
+#include "main.c"
 
-/**
- * sig_handler - handles the SIGINT signal by printing a new prompt
- * @sig: the signal number
- * Return: nothing
- */
-
-void sig_handler(int sig)
+void clean_up(void)
 {
-	char *new_prompt = "\n$ ";
-
-	(void)sig; /* to avoid unused variable warning */
-
-	signal(SIGINT, si_handler); /*This is to reset the signal handler */
-	write(STDIN_FILENO, new_prompt, 3); /*this is to print a new prompt */
+	free_env();
+	free_alias_list(aliases);
 }
 
-/**
- * execute - Executes a command in a child process.
- * @args: An array of arguments.
- * @front: A double pointer to the beginning of args.
- * Return: If an error occurs - a corresponding error code.
- * O/w - The exit value of the last executed command.
- */
-
-int execute(char **args, char **front)
+int handle_interactive(int *exe_ret)
 {
-	char *command = args[0];
-	int flag = 0, ret = 0;
-
-	if (command[0] != '/' && command[0] != '.')
-	{
-		flag = 1;
-		command = get_location(command);
-	}
-
-	if (!command || (access(command, F_OK) == -1))
-	{
-		if (errno == EACCES)
-			ret = (create_error(args, 126));
-		else
-			ret = (create_error(args, 127));
-	}
-	else
-	{
-		ret = execute_command(command, args, front);
-	}
-
-	if (flag)
-		free(command);
-	return (ret);
-}
-
-/**
- * execute_command - executes a given command with the
- * given arguments and environment variables
- * @command: the command to execute
- * @args: the array of arguments
- * @front: a pointer to the first element of args
- * Return: the exit status of the command
- */
-
-int execute_command(char *command, char **args, char **front)
-{
-	pid_t child_pid;
-	int status, ret = 0;
-
-	child_pid = fork();
-	if (child_pid == -1)
-	{
-		perror("Error child:");
-		return (1);
-	}
-	if (child_pid == 0)
-	{
-		execve(command, args, environ);
-		if (errno == EACCES)
-			ret = (create_error(args, 126));
-		free_env();
-		free_args(args, front);
-		free_alias_list(aliases);
-		_exit(ret);
-	}
-	else
-	{
-		wait(&status);
-		ret = WEXITSTATUS(status);
-	}
-	return (ret);
-}
-
-
-int main(int argc, char *argv[])
-{
-	int ret = 0, retn, *exe_ret = &retn;
+	int ret = 0;
 	char *prompt = "$ ", *new_line = "\n";
 
-	program_name = argv[0];
-	history = 1;
-	aliases = NULL;
-	signal(SIGINT, sig_handler);
-	*exe_ret = 0;
-	environ = _copyenv();
-	if (!environ)
-		exit(-100);
-	if (argc != 1)
-	{
-		ret = proc_file_commands(argv[1], exe_ret);
-		free_env();
-		free_alias_list(aliases);
-		return (*exe_ret);
-	}
-	if (!isatty(STDIN_FILENO))
-	{
-		while (ret != END_OF_FILE && ret != EXIT)
-			ret = handle_args(exe_ret);
-		free_env();
-		free_alias_list(aliases);
-		return (*exe_ret);
-	}
 	while (1)
 	{
 		write(STDOUT_FILENO, prompt, 2);
@@ -127,12 +19,53 @@ int main(int argc, char *argv[])
 		{
 			if (ret == END_OF_FILE)
 				write(STDOUT_FILENO, new_line, 1);
-			free_env();
-			free_alias_list(aliases);
-			exit(*exe_ret);
+			break;
 		}
 	}
-	free_env();
-	free_alias_list(aliases);
+
+	return ret;
+}
+
+int handle_non_interactive(int *exe_ret)
+{
+	int ret = 0;
+
+	while (ret != END_OF_FILE && ret != EXIT)
+		ret = handle_args(exe_ret);
+
+	return ret;
+}
+
+int main(int argc, char *argv[])
+{
+	int ret = 0, retn;
+	int *exe_ret = &retn;
+
+	program_name = argv[0];
+	history = 1;
+	aliases = NULL;
+	signal(SIGINT, sig_handler);
+
+	*exe_ret = 0;
+	environ = _copyenv();
+	if (!environ)
+		exit(-100);
+
+	if (argc != 1)
+	{
+		ret = proc_file_commands(argv[1], exe_ret);
+		clean_up();
+		return (*exe_ret);
+	}
+
+	if (!isatty(STDIN_FILENO))
+	{
+		ret = handle_non_interactive(exe_ret);
+		clean_up();
+		return (*exe_ret);
+	}
+
+	ret = handle_interactive(exe_ret);
+	clean_up();
 	return (*exe_ret);
 }
