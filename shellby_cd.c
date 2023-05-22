@@ -79,3 +79,16 @@ int is_valid_dir(char *arg, struct stat *dir)
 	return (stat(arg, dir) == 0 && S_ISDIR(dir->st_mode) &&
 			((dir->st_mode & S_IXUSR) != 0));
 }
+
+/**
+ * handle_error - handles an error by freeing oldpwd and calling create_error.
+ * @args: the array og arguments.
+ * @oldpwd: the previous working a directory.
+ * Return: the value returned by create_error.
+ */
+
+int handle_error(char **args, char *oldpwd)
+{
+	free(oldpwd);
+	return (create_error(args, 2));
+}
