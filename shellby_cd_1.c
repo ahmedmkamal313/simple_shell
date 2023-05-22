@@ -39,3 +39,17 @@ int update_env(char *oldpwd, char *pwd)
 	free(dir_info);
 	return (0);
 }
+
+/**
+ * print_pwd - prints the given pwd string to the standard output.
+ * @pwd: the string to print.
+ * Return: nothing.
+ */
+
+void print_pwd(char *pwd)
+{
+	char *new_line = "\n";
+
+	write(STDOUT_FILENO, pwd, _strlen(pwd));
+	write(STDOUT_FILENO, new_line, 1);
+}
