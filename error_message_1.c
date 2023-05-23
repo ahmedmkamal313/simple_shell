@@ -57,11 +57,11 @@ char *error_exit(char **args)
 		return (NULL);
 
 	/* calculate the length of the error message */
-	error_len = _strlen(progrm_name) + _strlen(history_str) +
+	error_len = _strlen(program_name) + _strlen(history_str) +
 		_strlen(args[0]) + 27;
 
 	/* allocate memory for the error message */
-	error = malloc(sizeof(char) * (error_len + 1));
+	error_msg = malloc(sizeof(char) * (error_len + 1));
 	if (!error_msg)
 	{
 		free(history_str);
@@ -101,10 +101,10 @@ char *error_cd(char **args)
 		args[0][2] = '\0';
 
 	/* calculate the length of the error message */
-	error_len = _strlen(progrm_name) + _strlen(history_str) +
+	error_len = _strlen(program_name) + _strlen(history_str) +
 		_strlen(args[0]) + 24;
 	/* allocate memory for the error message */
-	error = malloc(sizeof(char) * (error_len + 1));
+	error_msg = malloc(sizeof(char) * (error_len + 1));
 	if (!error_msg)
 	{
 		free(history_str);

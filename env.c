@@ -17,7 +17,7 @@ char **_getenv(const char *var)
 	/* Loop through the environ array*/
 	for (index = 0; environ[index]; index++)
 	{
-		if (_strncmp(var, environ[index], lengeth) == 0)
+		if (_strncmp(var, environ[index], length) == 0)
 			return (&environ[index]);
 	}
 	return (NULL);

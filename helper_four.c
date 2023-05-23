@@ -38,46 +38,41 @@ int check_args(char **args)
 
 int handle_args(int *exe_ret)
 {
-	char *line;
-	char **args;
-	char **front;
-	int i;
+	int ret = 0, index;
+	char **args, *line = NULL, **front;
 
 	line = get_args(line, exe_ret);
+	if (!line)
+		return (END_OF_FILE);
 
-	if (strlen(line) == 0)
-		return (-1);
-
-	args = strsplit(line, " ");
+	args = _strtok(line, " ");
 	free(line);
+	if (!args)
+		return (ret);
+	if (check_args(args) != 0)
+	{
+		*exe_ret = 2;
+		free_args(args, args);
+		return (*exe_ret);
+	}
+	front = args;
 
-	if (args == NULL)
-		return (0);
-	for (i == 0; args[i] != NULL; i++)
+	for (index = 0; args[index]; index++)
 	{
-		if (strcmp(args[i], ";") == 0)
+		if (_strncmp(args[index], ";", 1) == 0)
 		{
-			*exe_ret = 2;
-			free(args);
-			return (*exe_ret);
+			free(args[index]);
+			args[index] = NULL;
+			ret = call_args(args, front, exe_ret);
+			args = &args[++index];
+			index = 0;
 		}
 	}
-	front = &args[0];
-	for (i = 0; args[i] != NULL; i++)
-	{
-		if (strcmp(args[i], ";") == 0)
-		{
-			free(args[i]);
-			args[i] = NULL;
-			call_and_execute(front, exe_ret);
-			front = &args[i + 1];
-			i = -1;
-		}
-	}
-	if (args[i] != NULL)
-		call_and_execute(front, exe_ret);
-	front(front);
-	return (*exe_ret);
+	if (args)
+		ret = call_args(args, front, exe_ret);
+
+	free(front);
+	return (ret);
 }
 
 /**
@@ -91,23 +86,26 @@ int handle_args(int *exe_ret)
 
 int run_args(char **args, char **front, int *exe_ret)
 {
-	int ret = 0;
-	int i;
+	int ret, i;
+	int (*builtin)(char **args, char **front);
 
-	void (*builtin)(char **args, char **front) = get_builtin(args[0]);
+	builtin = get_builtin(args[0]);
 
 	if (builtin)
 	{
-		builtin(args + 1, front);
-		*exe_ret = EXIT_SUCCESS;
+		ret = builtin(args + 1, front);
+		if (ret != EXIT)
+			*exe_ret = ret;
 	}
 	else
 	{
-		*exe_ret = system(args[0]);
+		*exe_ret = execute(args, front);
 		ret = *exe_ret;
 	}
 
-	for (i = 0; args[i] != NULL; i++)
+	history++;
+
+	for (i = 0; args[i]; i++)
 		free(args[i]);
 
 	return (ret);

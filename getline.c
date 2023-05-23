@@ -85,10 +85,11 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		b++;
 		/* Reallocate memory for buffer if needed */
 		if (b >= 120)
+		{
 			buffer = realloc(buffer, (b + 1) * sizeof(char));
 			if (buffer == NULL)
-
 				return (-1);
+		}
 	}
 	/* Add null terminator to buffer */
 	buffer[b] = '\0';
@@ -98,7 +99,6 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	/* If error occurred, return -1 */
 	if (c == -1)
 		return (-1);
-
 	/* Return number of bytes read */
 	return (b + 1);
 }

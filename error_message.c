@@ -8,11 +8,11 @@
 
 char *error_env(char **args)
 {
-	char *error_msg, history_str;
+	char *error_msg, *history_str;
 	int error_len;
 
 	/* convert the history number to a string */
-	histroy_str = _itoa(history);
+	history_str = _itoa(history);
 
 	if (!history_str) /* if conversation fails return NULL */
 		return (NULL);
@@ -74,12 +74,12 @@ char *error_1(char **args)
 }
 
 /**
- * _error_126 - create an error.
+ * error_126 - create an error.
  * @args: array passed to the command.
  * Return: the error.
  */
 
-char *_error_126(char **args)
+char *error_126(char **args)
 {
 	char *error_msg, *history_str;
 	int error_len;
@@ -90,7 +90,7 @@ char *_error_126(char **args)
 		return (NULL);
 
 	/* calculate the length of the error message */
-	error_len = _strlen(progrm_name) + _strlen(history_str) +
+	error_len = _strlen(program_name) + _strlen(history_str) +
 		_strlen(args[0]) + 24;
 
 	/* allocate memory for the error */
@@ -127,7 +127,7 @@ char *error_127(char **args)
 		return (NULL);
 
 	/* calculate the length of the error message */
-	error_len = _strlen(progrm_name) + _strlen(history_str) +
+	error_len = _strlen(program_name) + _strlen(history_str) +
 		_strlen(args[0]) + 16;
 
 	/* allocate memory for the error message */

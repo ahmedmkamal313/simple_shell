@@ -34,7 +34,7 @@ void logical_ops(char *line, ssize_t *new_len)
 	/* assign the previous character to prev */
 	prev = *(line - 1);
 	/* assign the current character to curr */
-	current = *line;
+	curr = *line;
 	/* assign the next character to next */
 	next = *(line + 1);
 
@@ -49,7 +49,7 @@ void logical_ops(char *line, ssize_t *new_len)
 	{
 		if (next == '|' && prev != ' ')
 			(*new_len)++;
-		else if (previous == '|' && next != ' ')
+		else if (prev == '|' && next != ' ')
 			(*new_len)++;
 	}
 }
@@ -111,6 +111,7 @@ void handle_line(char **line, ssize_t read)
 	if (!new_line)
 		return;
 	j = 0;
+	old_line = *line;
 	for (i = 0; old_line[i]; i++)
 	{
 		current = old_line[i];
@@ -131,7 +132,7 @@ void handle_line(char **line, ssize_t read)
 				new_line[j++] = ' ';
 			else
 				j += (old_line[i - 1] == current) + (next == current);
-			newline[j++] = current;
+			new_line[j++] = current;
 		}
 		else
 			new_line[j++] = current;

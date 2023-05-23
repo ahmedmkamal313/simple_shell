@@ -24,13 +24,13 @@ char *_strchr(char *str, char ch)
  * Return: the length.
  */
 
-int _strlen(char *str)
+int _strlen(const char *str)
 {
-	int len = 0; /*Initialize a variable to store length “ len = 0 “.*/
+	int length = 0; /*Initialize a variable to store length “ len = 0 “.*/
 
 	while (*str != '\0') /*Loop until the end of the string.*/
 	{
-		len++; /*ncrement the length by one “ len ++”.*/
+		length++; /*ncrement the length by one “ len ++”.*/
 		str++; /*Move to the next character “ str ++”.*/
 	}
 	return (length); /*Return the length.*/
@@ -70,7 +70,7 @@ unsigned int _strspn(char *str, char *prefix)
 
 	while (*str != '\0') /*Loop until the end of the string.*/
 	{
-		if (is_included(*str, prefix)) /*Check if the current character in prefix.*/
+		if (_is_included(*str, prefix)) /*Check if the current character in prefix.*/
 		{
 			length++; /*Increment the length by one “ length++’.*/
 		}

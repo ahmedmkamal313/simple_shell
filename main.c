@@ -76,7 +76,7 @@ int handle_non_interactive(int *exe_ret)
 
 int main(int argc, char *argv[])
 {
-	int ret = 0, retn;
+	int retn;
 	int *exe_ret = &retn;
 
 	program_name = argv[0];
@@ -91,19 +91,19 @@ int main(int argc, char *argv[])
 
 	if (argc != 1)
 	{
-		ret = proc_file_commands(argv[1], exe_ret);
+		proc_file_commands(argv[1], exe_ret);
 		clean_up();
 		return (*exe_ret);
 	}
 
 	if (!isatty(STDIN_FILENO))
 	{
-		ret = handle_non_interactive(exe_ret);
+		handle_non_interactive(exe_ret);
 		clean_up();
 		return (*exe_ret);
 	}
 
-	ret = handle_interactive(exe_ret);
+	handle_interactive(exe_ret);
 	clean_up();
 	return (*exe_ret);
 }

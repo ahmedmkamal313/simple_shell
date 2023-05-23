@@ -48,21 +48,17 @@ char *get_args(char *line, int *exe_ret)
 
 int call_args(char **args, char **front, int *exe_ret)
 {
-	int ret = 0;
-	int index = 0;
+	int ret, index;
 
-	if (args == NULL)
-	{
+	if (!args[0])
 		return (*exe_ret);
-	}
-	while (args[index] != NULL)
+	for (index = 0; args[index]; index++)
 	{
-		ret = handle_operators(args, front, exe_ret, &index);
-		if (ret != -1)
-			return (ret);
-		index++;
+		if (_strncmp(args[index], "||", 2) == 0)
+			ret = handle_operators(args, front, exe_ret, "||");
+		else if (_strncmp(args[index], "&&", 2) == 0)
+			ret = handle_operators(args, front, exe_ret, "&&");
 	}
-
 	args = replace_aliases(args);
 	ret = run_args(args, front, exe_ret);
 	return (ret);
@@ -73,51 +69,30 @@ int call_args(char **args, char **front, int *exe_ret)
  * @args: the array of arguments.
  * @front: the pointer to the first argument.
  * @exe_ret: the pointer to the execution return value.
- * @index: the pointer to the current index in the args array.
+ * @op: a string representing the operator ("||" or "&&")
  * Return: 0 or the return value of run_args
  * if an operator is found, -1 otherwise.
  */
 
-int handle_operators(char **args, char **front, int *exe_ret, int *index)
+int handle_operators(char **args, char **front, int *exe_ret, char *op)
 {
 	int ret;
+	int index = 0;
 
-	if (_strncmp(args[*index], "||", 2) == 0)
+	free(args[index]);
+	args[index] = NULL;
+	args = replace_aliases(args);
+	ret = run_args(args, front, exe_ret);
+	if (*exe_ret == (_strncmp(op, "||", 2) == 0 ? 0 : 1))
 	{
-		free(args[*index]);
-		args[*index] = NULL;
-		args = replace_aliases(args);
-		args = run_args(args, front, exe_ret);
-
-		if (*exe_ret != 0)
-		{
-			args = &args[++(*index)];
-			*index = 0;
-		}
-		else
-		{
-			for ((*index)++; args[*index]; (*index)++)
-				free(args[*index]);
-			return (0);
-		}
+		for (index++; args[index]; index++)
+			free(args[index]);
+		return (ret);
 	}
-	else if (_strncmp(args[*index], "&&", 2) == 0)
+	else
 	{
-		free(args[*index]);
-		args[*index] = NULL;
-		ret = run_args(args, front, exe_ret);
-
-		if (*exe_ret != 0)
-		{
-			args = &args[++(*index)];
-			*index = 0;
-		}
-		else
-		{
-			for ((*index)++; args[*index]; (*index)++)
-				free(args[*index]);
-			return (ret);
-		}
+		args = &args[++index];
+		index = 0;
 	}
-	return (-1);
+	return (0);
 }
