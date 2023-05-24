@@ -40,37 +40,38 @@ int (*get_builtin(char *command))(char **args, char **front)
  * if the given exit value is invalid - 2.
  * otherwise  exits with the given status value.
  */
+
 int shellby_exit(char **args, char **front)
 {
 	int i, len_of_int = 10;
 	unsigned int num = 0, max = 1 << (sizeof(int) * 8 - 1);
 
-	if (args[0])
+	if (args == NULL || args[0] == NULL) /* check if args is NULL or empty */
+		return (-3); /* exit with status 0 */
+
+	if (args[0][0] == '+')
 	{
-		if (args[0][0] == '+')
-		{
-			i = 1;
-			len_of_int++;
-		}
-		for (; args[0][i]; i++)
-		{
-			if (i <= len_of_int && args[0][i] >= '0' && args[0][i] <= '9')
-				num = (num * 10) + (args[0][i] - '0');
-			else
-				return (create_error(--args, 2));
-		}
+		i = 1;
+		len_of_int++;
 	}
-	else
+	for (; args[0][i]; i++)
 	{
-		return (-3);
+		if (i <= len_of_int && args[0][i] >= '0' && args[0][i] <= '9')
+			num = (num * 10) + (args[0][i] - '0');
+		else
+			return (create_error(--args, 2)); /* return an error if args[0] is not a valid integer */
 	}
+	if (args[1] != NULL) /* check if there is more than one argument */
+		return (create_error(--args, 2)); /* return an error if there is more than one argument */
+
 	if (num > max - 1)
-		return (create_error(--args, 2));
+		return (create_error(--args, 2)); /* return an error if num is too large */
+
 	args -= 1;
-	free_args(args, front);
-	free_env();
-	free_alias_list(aliases);
-	exit(num);
+	free_args(args, front);	  /* free the arguments */
+	free_env(); /* free the environment variables */
+	free_alias_list(aliases); /* free the aliases */
+	exit(num);/* exit with status num */
 }
 
 /**

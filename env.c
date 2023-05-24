@@ -26,9 +26,12 @@ char **_getenv(const char *var)
 /**
  * free_env - free the memory allocated
  */
+
 void free_env(void)
 {
 	int index; /* declare a variable to store index of the array */
+	if (environ == NULL) /* check if environ is NULL */
+		return; /* do nothing if environ is NULL */
 	/* lop through the array */
 	for (index = 0; environ[index]; index++)
 		free(environ[index]); /* free each string*/

@@ -10,10 +10,11 @@ void free_args(char **args, char **front)
 {
 	size_t i; /*Declare a variable to loop through the array*/
 
+	if (args == NULL || front == NULL) /* check if args or front is NULL */
+		return; /* do nothing if either of them is NULL */
 	/* Loop until reaching either a null pointer or the last element */
 	for (i = 0; args[i] || args[i + 1]; i++)
 		free(args[i]);
-
 	free(front);
 }
 
