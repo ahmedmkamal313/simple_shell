@@ -1,5 +1,10 @@
 #include "main.h"
 
+/* Define the global variables here */
+alias_t *aliases; /* define the variable here */
+char *name; /* define the variable here */
+int hist; /* define the variable here */
+
 /**
  * clean_up - cleans up the memory allocated for
  * the environment variables and the alias list

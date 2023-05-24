@@ -59,16 +59,16 @@ typedef struct list_s
 } list_t;
 
 /* Global aliases linked list */
-alias_t *aliases;
+extern alias_t *aliases;
 
 /* Global environemnt */
 extern char **environ;
 
 /* Global program name */
-char *program_name;
+extern char *program_name;
 
 /* Global history counter */
-int history;
+extern int history;
 
 int shellby_alias(char **args, char __attribute__((__unused__)) **front);
 void set_alias(char *var_name, char *value);

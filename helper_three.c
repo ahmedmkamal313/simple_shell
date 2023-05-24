@@ -18,13 +18,13 @@ char *get_args(char *line, int *exe_ret)
 		free(line);
 
 	/*read a line from standard input (read = _getlne(&line, &n, STDIN_FILENO)*/
-	read = getline(&line, &n, STDIN_FILENO);
+	read = _getline(&line, &n, STDIN_FILENO);
 	if (read == -1 || read == 0) /*if there is an error or EOF return null.*/
 		return (NULL);
 
 	if (read == 1) /*if line is empty ( read == 1).*/
 	{
-		(*exe_ret)++;
+		history++;
 		if (isatty(STDIN_FILENO)) /*f (isatty(STDIN_FILENO)).*/
 			write(STDOUT_FILENO, prompt, 2);
 		return (get_args(line, exe_ret));
