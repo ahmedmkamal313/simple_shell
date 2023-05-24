@@ -55,44 +55,43 @@ int call_args(char **args, char **front, int *exe_ret)
 	for (index = 0; args[index]; index++)
 	{
 		if (_strncmp(args[index], "||", 2) == 0)
-			ret = handle_operators(args, front, exe_ret, "||");
+		{
+			free(args[index]);
+			args[index] = NULL;
+			args = replace_aliases(args);
+			ret = run_args(args, front, exe_ret);
+			if (*exe_ret != 0)
+			{
+				args = &args[++index];
+				index = 0;
+			}
+			else
+			{
+				for (index++; args[index]; index++)
+					free(args[index]);
+				return (ret);
+			}
+		}
 		else if (_strncmp(args[index], "&&", 2) == 0)
-			ret = handle_operators(args, front, exe_ret, "&&");
+		{
+			free(args[index]);
+			args[index] = NULL;
+			args = replace_aliases(args);
+			ret = run_args(args, front, exe_ret);
+			if (*exe_ret == 0)
+			{
+				args = &args[++index];
+				index = 0;
+			}
+			else
+			{
+				for (index++; args[index]; index++)
+					free(args[index]);
+				return (ret);
+			}
+		}
 	}
 	args = replace_aliases(args);
 	ret = run_args(args, front, exe_ret);
 	return (ret);
-}
-
-/**
- * handle_operators - handles the logical operators || and && in the arguments.
- * @args: the array of arguments.
- * @front: the pointer to the first argument.
- * @exe_ret: the pointer to the execution return value.
- * @op: a string representing the operator ("||" or "&&")
- * Return: 0 or the return value of run_args
- * if an operator is found, -1 otherwise.
- */
-
-int handle_operators(char **args, char **front, int *exe_ret, char *op)
-{
-	int ret;
-	int index = 0;
-
-	free(args[index]);
-	args[index] = NULL;
-	args = replace_aliases(args);
-	ret = run_args(args, front, exe_ret);
-	if (*exe_ret == (_strncmp(op, "||", 2) == 0 ? 0 : 1))
-	{
-		for (index++; args[index]; index++)
-			free(args[index]);
-		return (ret);
-	}
-	else
-	{
-		args = &args[++index];
-		index = 0;
-	}
-	return (0);
 }

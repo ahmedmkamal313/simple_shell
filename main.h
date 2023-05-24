@@ -109,7 +109,7 @@ int cant_open(char *file_path);
 int read_file(char *file_path, char **line, int *exe_ret);
 int proc_file_commands(char *file_path, int *exe_ret);
 
-void *_realloc(void *ptr, size_t old_size, size_t new_size);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 void assign_lineptr(char **lineptr, size_t *n, char *buffer, size_t b);
 

@@ -7,38 +7,29 @@
 
 char *get_pid(void)
 {
-	int fd, i; /* file descriptor for the stat file*/
-	char buf[10]; /* buffer to stor the PID */
-	ssize_t bytes; /* number of bytes read from the file */
+	size_t i = 0;
+	char *buffer;
+	ssize_t file;
 
-	/* open the stat file in read-only mode */
-	fd = open("/prog/self/stat", O_RDONLY);
-	if (fd == -1) /*check if the open failed */
+	file = open("/proc/self/stat", O_RDONLY);
+	if (file == -1)
 	{
-		perror("Can't read file"); /* print an error message */
+		perror("Cant read file");
 		return (NULL);
 	}
-	/* read up to 10 bytes from the file into the buffer */
-	bytes = read(fd, buf, 10);
-	if (bytes == -1) /* check if the read failed */
+	buffer = malloc(120);
+	if (!buffer)
 	{
-		perror("Can't read file"); /* print an error message */
-		close(fd); /* close the file descriptor */
+		close(file);
 		return (NULL);
 	}
-	close(fd); /* close the file descriptor */
-	buf[bytes] = '\0'; /* add null terminator to the end of buffer*/
-	/* loop over the buffer */
-	for (i = 0; i < bytes; i++)
-	{
-		if (buf[i] == ' ') /*check if there is a space char */
-		{
-			/* replace it with a null terminator */
-			buf[i] = '\0';
-			break;
-		}
-	}
-	return (strdup(buf)); /*return a copy of the buffer as a string*/
+	read(file, buffer, 120);
+	while (buffer[i] != ' ')
+		i++;
+	buffer[i] = '\0';
+
+	close(file);
+	return (buffer);
 }
 
 /**
@@ -93,81 +84,52 @@ char *get_env_value(char *beginning, int length)
 
 void variable_replacement(char **line, int *exe_ret)
 {
-	/**
-	 * Three variables to store the loop index,
-	 * the start index and the size of the line
-	 */
-	int i, start = 0;
-	/**
-	 * Three pointers to store the substitute value,
-	 * the old input line and the new input line
-	 */
-	char *substitute = NULL, *old_input = NULL, *new_input;
+	int j, k = 0, len;
+	char *replacement = NULL, *old_line = NULL, *new_line;
 
-	old_input = *line; /*Set the old input pointer to point to the line*/
-	/*Loop through all the characters in the old input*/
-	for (i = 0; old_input[i]; i++)
+	old_line = *line;
+	for (j = 0; old_line[j]; j++)
 	{
-		if (old_input[i] == '$' && old_input[i + 1] && old_input[i + 1] != ' ')
+		if (old_line[j] == '$' && old_line[j + 1] &&
+				old_line[j + 1] != ' ')
 		{
-			/*Get the substitute value for the variable name after the dollar sign*/
-			substitute = get_substitute(old_input, exe_ret, &i, &start);
-			/*Allocate memory for the new input line*/
-			new_input = malloc(i + _strlen(substitute) +
-					_strlen(&old_input[start]) + 1);
-			if (!line)
-				return; /*Return if allocation fails*/
-			new_input[0] = '\0'; /*Initialize the new input to an empty string*/
-			_strncat(new_input, old_input, i);
-			if (substitute) /*If there is a substitute value*/
+			if (old_line[j + 1] == '$')
 			{
-				/*Concatenate the substitute value to the new input*/
-				_strcat(new_input, substitute);
-				free(substitute); /*Free the substitute pointer*/
-				substitute = NULL; /*Set it to NULL*/
+				replacement = get_pid();
+				k = j + 2;
 			}
-			_strcat(new_input, &old_input[start]);
-			free(old_input); /*Free the old input pointer*/
-			*line = new_input; /* Set the line pointer to point to the new input*/
-			old_input  = new_input; /*Set the old input to point to the new input*/
-			i = -1; /*Reset the loop index*/
+			else if (old_line[j + 1] == '?')
+			{
+				replacement = _itoa(*exe_ret);
+				k = j + 2;
+			}
+			else if (old_line[j + 1])
+			{
+				/* extract the variable name to search for */
+				for (k = j + 1; old_line[k] &&
+						old_line[k] != '$' &&
+						old_line[k] != ' '; k++)
+					;
+				len = k - (j + 1);
+				replacement = get_env_value(&old_line[j + 1], len);
+			}
+			new_line = malloc(j + _strlen(replacement)
+					  + _strlen(&old_line[k]) + 1);
+			if (!line)
+				return;
+			new_line[0] = '\0';
+			_strncat(new_line, old_line, j);
+			if (replacement)
+			{
+				_strcat(new_line, replacement);
+				free(replacement);
+				replacement = NULL;
+			}
+			_strcat(new_line, &old_line[k]);
+			free(old_line);
+			*line = new_line;
+			old_line = new_line;
+			j = -1;
 		}
 	}
-}
-
-/**
- * get_substitute - returns a substitute string for a variable in the input
- * @old_input: the original input string
- * @exe_ret: the execution return value
- * @i: the index of the '$' character in the input
- * @start: the index of the next character after the variable name in the input
- * Return: a pointer to the substitute string, or NULL if none
- */
-
-char *get_substitute(char *old_input, int *exe_ret, int *i, int *start)
-{
-	char *substitute = NULL;
-	int size;
-
-	if (old_input[*i + 1] == '$')
-	{
-		substitute = get_pid(); /*get the process ID as a string*/
-		*start = *i + 2;
-	}
-	else if (old_input[*i + 1] == '?')
-	{
-		substitute = _itoa(*exe_ret); /*get the exit status of last command */
-		*start = *i + 2;
-	}
-	else if (old_input[*i + 1])
-	{
-		/* find the end of the environment variable name */
-		for (*start = *i + 1; old_input[*start] && old_input[*start] != '$' &&
-				old_input[*start] != ' '; (*start)++)
-			;
-		size = *start - (*i + 1);
-		/* get the value of the environment variable */
-		substitute = get_env_value(&old_input[*i + 1], size);
-	}
-	return (substitute);
 }
