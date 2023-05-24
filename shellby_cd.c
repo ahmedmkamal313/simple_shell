@@ -10,6 +10,7 @@
 
 int shellby_cd(char **args, char __attribute__((__unused__)) **front)
 {
+	char **dir_info, *new_line = "\n";
 	char *oldpwd = NULL, *pwd = NULL;
 	struct stat dir;
 
@@ -19,76 +20,62 @@ int shellby_cd(char **args, char __attribute__((__unused__)) **front)
 
 	if (args[0])
 	{
-		if (is_dash(args[0]))
-			chdir_to_oldpwd();
-		else if (is_valid_dir(args[0], &dir))
-			chdir(args[0]);
+		if (*(args[0]) == '-' || _strcmp(args[0], "--") == 0)
+		{
+			if ((args[0][1] == '-' && args[0][2] == '\0') ||
+					args[0][1] == '\0')
+			{
+				if (_getenv("OLDPWD") != NULL)
+					(chdir(*_getenv("OLDPWD") + 7));
+			}
+			else
+			{
+				free(oldpwd);
+				return (create_error(args, 2));
+			}
+		}
 		else
-			return (handle_error(args, oldpwd));
+		{
+			if (stat(args[0], &dir) == 0 && S_ISDIR(dir.st_mode)
+					&& ((dir.st_mode & S_IXUSR) != 0))
+				chdir(args[0]);
+			else
+			{
+				free(oldpwd);
+				return (create_error(args, 2));
+			}
+		}
 	}
 	else
-		chdir_to_home();
+	{
+		if (_getenv("HOME") != NULL)
+			chdir(*(_getenv("HOME")) + 5);
+	}
 
 	pwd = getcwd(pwd, 0);
 	if (!pwd)
 		return (-1);
 
-	if (update_env(oldpwd, pwd) == -1)
+	dir_info = malloc(sizeof(char *) * 2);
+	if (!dir_info)
 		return (-1);
 
-	if (args[0] && is_dash(args[0]))
-		print_pwd(pwd);
+	dir_info[0] = "OLDPWD";
+	dir_info[1] = oldpwd;
+	if (shellby_setenv(dir_info, dir_info) == -1)
+		return (-1);
 
+	dir_info[0] = "PWD";
+	dir_info[1] = pwd;
+	if (shellby_setenv(dir_info, dir_info) == -1)
+		return (-1);
+	if (args[0] && args[0][0] == '-' && args[0][1] != '-')
+	{
+		write(STDOUT_FILENO, pwd, _strlen(pwd));
+		write(STDOUT_FILENO, new_line, 1);
+	}
 	free(oldpwd);
 	free(pwd);
+	free(dir_info);
 	return (0);
-}
-
-/**
- * is_dash - checks if a string is a dash or a double dash.
- * @arg: the string to check.
- * Return: 1 if arg is "-" or "--", 0 otherwise.
- */
-
-int is_dash(char *arg)
-{
-	return ((*(arg) == '-' || _strcmp(arg, "--") == 0) &&
-		((arg[1] == '-' && arg[2] == '\0') || arg[1] == '\0'));
-}
-
-/**
- * chdir_to_oldpwd - change the current wokring directory to the previous one.
- * Return: nothing.
- */
-
-void chdir_to_oldpwd(void)
-{
-	if (_getenv("OLDPWD") != NULL)
-		chdir(*_getenv("OLDPWD") + 7);
-}
-
-/**
- * is_valid_dir - check if a string is valid directory.
- * @arg: the string to check
- * @dir: a pointer to a stract stat to store the file information.
- * Return: 1 if arg is a valid directory, 0 otherwise.
- */
-
-int is_valid_dir(char *arg, struct stat *dir)
-{
-	return (stat(arg, dir) == 0 && S_ISDIR(dir->st_mode) &&
-			((dir->st_mode & S_IXUSR) != 0));
-}
-
-/**
- * handle_error - handles an error by freeing oldpwd and calling create_error.
- * @args: the array og arguments.
- * @oldpwd: the previous working a directory.
- * Return: the value returned by create_error.
- */
-
-int handle_error(char **args, char *oldpwd)
-{
-	free(oldpwd);
-	return (create_error(args, 2));
 }
