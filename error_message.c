@@ -64,9 +64,8 @@ char *error_1(char **args)
 	if (!error_msg)
 		return (NULL);
 
-	/* copy the program_name to error */
-	_strcpy(error_msg, program_name);
-	_strcat(error_msg, ": ");
+	/* copy the to error */
+	_strcpy(error_msg, "alias: ");
 	_strcat(error_msg, args[0]);
 	_strcat(error_msg, " not found\n");
 
