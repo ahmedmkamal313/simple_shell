@@ -10,16 +10,17 @@
 char *_strcat(char *dest, char *src)
 {
 	char *p = dest; /*save the original pointer to dest.*/
+	const char *source = src;
 
-	while (*dest) /*move dest to the end of the string.*/
-		dest++;
+	while (*p != '\0') /*move dest to the end of the string.*/
+		p++;
 
-	while (*src) /*copy src to dest.*/
-		*dest++ = *src++;
+	while (*source != '\0') /*copy src to dest.*/
+		*p++ = *source++;
 
-	*dest = '\0'; /*add null terminator */
+	*p = '\0'; /*add null terminator */
 
-	return (p); /*return the original pointer to dest. */
+	return (dest); /*return the original pointer to dest. */
 }
 
 /**

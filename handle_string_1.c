@@ -20,20 +20,19 @@ char *_strchr(char *str, char ch)
 
 /**
  * _strlen - return the length of a string.
- * @str: the pointer to be string.
+ * @s: the pointer to be string.
  * Return: the length.
  */
 
-int _strlen(const char *str)
+int _strlen(const char *s)
 {
-	int length = 0; /*Initialize a variable to store length “ len = 0 “.*/
+	int length = 0;
 
-	while (*str != '\0') /*Loop until the end of the string.*/
-	{
-		length++; /*ncrement the length by one “ len ++”.*/
-		str++; /*Move to the next character “ str ++”.*/
-	}
-	return (length); /*Return the length.*/
+	if (!s)
+		return (length);
+	for (length = 0; s[length]; length++)
+		;
+	return (length);
 }
 
 /**
