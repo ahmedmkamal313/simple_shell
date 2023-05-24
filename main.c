@@ -1,69 +1,97 @@
 #include "main.h"
 
-/* Define the global variables here */
-alias_t *aliases; /* define the variable here */
-char *name; /* define the variable here */
-int hist; /* define the variable here */
+/*define global*/
+char *program_name;
+int history;
+alias_t *aliases;
 
 /**
- * clean_up - cleans up the memory allocated for
- * the environment variables and the alias list
+ * sig_handler - handles the SIGINT signal by printing a new prompt
+ * @sig: the signal number
  * Return: nothing
- *
- * Description: This function calls free_env and free_alias_list
  */
 
-void clean_up(void)
+void sig_handler(int sig)
 {
-	free_env();
-	free_alias_list(aliases);
+	char *new_prompt = "\n$ ";
+
+	(void)sig; /* to avoid unused variable warning */
+
+	signal(SIGINT, sig_handler); /*This is to reset the signal handler */
+	write(STDIN_FILENO, new_prompt, 3); /*this is to print a new prompt */
 }
 
 /**
- * handle_interactive - handles the interactive mode of the shell
- * @exe_ret: a pointer to an int that stores the execution return value
- * Return: the return value
- *
- * Description: This function loops until the end of file
- * or exit and writes a prompt and calls handle_args
+ * execute - Executes a command in a child process.
+ * @args: An array of arguments.
+ * @front: A double pointer to the beginning of args.
+ * Return: If an error occurs - a corresponding error code.
+ * O/w - The exit value of the last executed command.
  */
 
-int handle_interactive(int *exe_ret)
+int execute(char **args, char **front)
 {
-	int ret = 0;
-	char *prompt = "$ ", *new_line = "\n";
+	char *command = args[0];
+	int flag = 0, ret = 0;
 
-	while (1)
+	if (command[0] != '/' && command[0] != '.')
 	{
-		write(STDOUT_FILENO, prompt, 2);
-		ret = handle_args(exe_ret);
-		if (ret == END_OF_FILE || ret == EXIT)
-		{
-			if (ret == END_OF_FILE)
-				write(STDOUT_FILENO, new_line, 1);
-			break;
-		}
+		flag = 1;
+		command = get_location(command);
 	}
 
+	if (!command || (access(command, F_OK) == -1))
+	{
+		if (errno == EACCES)
+			ret = (create_error(args, 126));
+		else
+			ret = (create_error(args, 127));
+	}
+	else
+	{
+		ret = execute_command(command, args, front);
+	}
+
+	if (flag)
+		free(command);
 	return (ret);
 }
 
 /**
- * handle_non_interactive - handles the non-interactive mode of the shell
- * @exe_ret: a pointer to an int that stores the execution return value
- * Return: the return value
- *
- * Description: This function loops until
- * the end of file or exit and calls handle_args
+ * execute_command - executes a given command with the
+ * given arguments and environment variables
+ * @command: the command to execute
+ * @args: the array of arguments
+ * @front: a pointer to the first element of args
+ * Return: the exit status of the command
  */
 
-int handle_non_interactive(int *exe_ret)
+int execute_command(char *command, char **args, char **front)
 {
-	int ret = 0;
+	pid_t child_pid;
+	int status, ret = 0;
 
-	while (ret != END_OF_FILE && ret != EXIT)
-		ret = handle_args(exe_ret);
-
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("Error child:");
+		return (1);
+	}
+	if (child_pid == 0)
+	{
+		execve(command, args, environ);
+		if (errno == EACCES)
+			ret = (create_error(args, 126));
+		free_env();
+		free_args(args, front);
+		free_alias_list(aliases);
+		_exit(ret);
+	}
+	else
+	{
+		wait(&status);
+		ret = WEXITSTATUS(status);
+	}
 	return (ret);
 }
 
@@ -81,8 +109,9 @@ int handle_non_interactive(int *exe_ret)
 
 int main(int argc, char *argv[])
 {
-	int retn;
+	int ret = 0, retn;
 	int *exe_ret = &retn;
+	char *prompt = "$ ", *new_line = "\n";
 
 	program_name = argv[0];
 	history = 1;
@@ -96,19 +125,36 @@ int main(int argc, char *argv[])
 
 	if (argc != 1)
 	{
-		proc_file_commands(argv[1], exe_ret);
-		clean_up();
+		ret = proc_file_commands(argv[1], exe_ret);
+		free_env();
+		free_alias_list(aliases);
 		return (*exe_ret);
 	}
 
 	if (!isatty(STDIN_FILENO))
 	{
-		handle_non_interactive(exe_ret);
-		clean_up();
+		while (ret != END_OF_FILE && ret != EXIT)
+			ret = handle_args(exe_ret);
+		free_env();
+		free_alias_list(aliases);
 		return (*exe_ret);
 	}
 
-	handle_interactive(exe_ret);
-	clean_up();
+	while (1)
+	{
+		write(STDOUT_FILENO, prompt, 2);
+		ret = handle_args(exe_ret);
+		if (ret == END_OF_FILE || ret == EXIT)
+		{
+			if (ret == END_OF_FILE)
+				write(STDOUT_FILENO, new_line, 1);
+			free_env();
+			free_alias_list(aliases);
+			exit(*exe_ret);
+		}
+	}
+
+	free_env();
+	free_alias_list(aliases);
 	return (*exe_ret);
 }
