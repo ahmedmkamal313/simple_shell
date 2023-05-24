@@ -66,29 +66,49 @@ ssize_t get_new_len(char *line)
 	ssize_t new_len = 0;
 	char current, next;
 
-	/* loop through the line until reaching the null term */
 	for (i = 0; line[i]; i++)
 	{
-		current = line[i]; /* assign the current char to current */
-		next = line[i + 1]; /*assign the next to next */
-		if (current == '#' && (i == 0 || line[i - 1] == ' '))
+		current = line[i];
+		next = line[i + 1];
+		if (current == '#')
 		{
-			line[i] = '\0'; /* replace it will null term */
-			break;
+			if (i == 0 || line[i - 1] == ' ')
+			{
+				line[i] = '\0';
+				break;
+			}
+		}
+		else if (i != 0)
+		{
+			if (current == ';')
+			{
+				if (next == ';' && line[i - 1] != ' ' && line[i - 1] != ';')
+				{
+					new_len += 2;
+					continue;
+				}
+				else if (line[i - 1] == ';' && next != ' ')
+				{
+					new_len += 2;
+					continue;
+				}
+				if (line[i - 1] != ' ')
+					new_len++;
+				if (next != ' ')
+					new_len++;
+			}
+			else
+				logical_ops(&line[i], &new_len);
 		}
 		else if (current == ';')
 		{
-			if ((next == ';' || line[i - 1] == ';')
-					&& line[i - 1] != ' ' && next != ' ')
-				new_len += 2;
-			else
-				new_len += (line[i - 1] != ' ') + (next != ' ');
+			if (i != 0 && line[i - 1] != ' ')
+				new_len++;
+			if (next != ' ' && next != ';')
+				new_len++;
 		}
-		else
-			logical_ops(&line[i], &new_len);
 		new_len++;
 	}
-
 	return (new_len);
 }
 
@@ -100,7 +120,8 @@ ssize_t get_new_len(char *line)
 
 void handle_line(char **line, ssize_t read)
 {
-	char *old_line, *new_line, current, next;
+	char *old_line, *new_line;
+	char previous, current, next;
 	size_t i, j;
 	ssize_t new_len;
 
@@ -116,28 +137,66 @@ void handle_line(char **line, ssize_t read)
 	{
 		current = old_line[i];
 		next = old_line[i + 1];
-		if (current == ';')
+		if (i != 0)
 		{
-			if ((next == ';' || old_line[i - 1] == ';')
-					&& old_line[i - 1] != ' ' && next != ' ')
+			previous = old_line[i - 1];
+			if (current == ';')
+			{
+				if (next == ';' && previous != ' ' && previous != ';')
+				{
+					new_line[j++] = ' ';
+					new_line[j++] = ';';
+					continue;
+				}
+				else if (previous == ';' && next != ' ')
+				{
+					new_line[j++] = ';';
+					new_line[j++] = ' ';
+					continue;
+				}
+				if (previous != ' ')
+					new_line[j++] = ' ';
+				new_line[j++] = ';';
+				if (next != ' ')
+					new_line[j++] = ' ';
+				continue;
+			}
+			else if (current == '&')
+			{
+				if (next == '&' && previous != ' ')
+					new_line[j++] = ' ';
+				else if (previous == '&' && next != ' ')
+				{
+					new_line[j++] = '&';
+					new_line[j++] = ' ';
+					continue;
+				}
+			}
+			else if (current == '|')
+			{
+				if (next == '|' && previous != ' ')
+					new_line[j++]  = ' ';
+				else if (previous == '|' && next != ' ')
+				{
+					new_line[j++] = '|';
+					new_line[j++] = ' ';
+					continue;
+				}
+			}
+		}
+		else if (current == ';')
+		{
+			if (i != 0 && old_line[i - 1] != ' ')
 				new_line[j++] = ' ';
-			else
-				j += (old_line[i - 1] != ' ') + (next != ' ');
 			new_line[j++] = ';';
-		}
-		else if (current == '&' || current == '|')
-		{
-			if ((next == current || old_line[i - 1] == current)
-					&& old_line[i - 1] != ' ' && next != ' ')
+			if (next != ' ' && next != ';')
 				new_line[j++] = ' ';
-			else
-				j += (old_line[i - 1] == current) + (next == current);
-			new_line[j++] = current;
+			continue;
 		}
-		else
-			new_line[j++] = current;
+		new_line[j++] = old_line[i];
 	}
 	new_line[j] = '\0';
+
 	free(*line);
 	*line = new_line;
 }
