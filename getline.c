@@ -64,7 +64,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	static ssize_t input;
 	ssize_t ret;
-	char c = 'x', *buffer;
+	char c = 'x', *buffer, *tmp;
 	int r;
 
 	if (input == 0)
@@ -73,7 +73,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		return (-1);
 	input = 0;
 
-	buffer = malloc(sizeof(char) * 120);
+	buffer = malloc(sizeof(char) * 10); /* allocate a small initial buffer */
 	if (!buffer)
 		return (-1);
 
@@ -91,11 +91,19 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			break;
 		}
 
-		if (input >= 120)
-			buffer = _realloc(buffer, input, input + 1);
-
 		buffer[input] = c;
 		input++;
+
+		if (input % 10 == 0) /* if the buffer is full */
+		{
+			tmp = realloc(buffer, input + 10); /* resize the buffer by 10 more bytes */
+			if (!tmp)						   /* if realloc fails */
+			{
+				free(buffer);
+				return (-1);
+			}
+			buffer = tmp; /* assign the new buffer to the old one */
+		}
 	}
 	buffer[input] = '\0';
 
@@ -119,24 +127,18 @@ void assign_lineptr(char **lineptr, size_t *n, char *buffer, size_t b)
 {
 	if (*lineptr == NULL)
 	{
-		if (b > 120)
-			*n = b;
-		else
-			*n = 120;
+		*n = (b > 120) ? b : 120; /* use a ternary operator to assign n */
 		*lineptr = buffer;
 	}
 	else if (*n < b)
 	{
-		if (b > 120)
-			*n = b;
-		else
-			*n = 120;
+		*n = (b > 120) ? b : 120; /* use a ternary operator to assign n */
 		*lineptr = buffer;
 	}
 	else
 	{
-		_strcpy(*lineptr, buffer);
-		free(buffer);
+		_strcpy(*lineptr, buffer); /* use strcpy() function to copy the buffer */
+		if (buffer != NULL) /* check if buffer is NULL before freeing it */
+			free(buffer);
 	}
 }
-
