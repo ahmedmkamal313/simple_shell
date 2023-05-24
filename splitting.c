@@ -30,30 +30,21 @@ int token_len(char *str, char *delim)
 
 int count_tokens(char *str, char *delim)
 {
-	int index;
-	int num_tokens = 0;
-	int len = 0;
+	int index, tokens = 0, len = 0;
 
-	while (str[index] != '\0')
-	{
+	for (index = 0; *(str + index); index++)
 		len++;
-		index++;
-	}
 
-	index = 0;
-
-	while (index < len)
+	for (index = 0; index < len; index++)
 	{
-		if (str[index] != *delim)
+		if (*(str + index) != *delim)
 		{
-			num_tokens++;
+			tokens++;
 			index += token_len(str + index, delim);
 		}
-
-			index++;
 	}
 
-	return (num_tokens);
+	return (tokens);
 }
 
 /**
@@ -66,44 +57,43 @@ int count_tokens(char *str, char *delim)
 
 char **_strtok(char *line, char *delim)
 {
-	char **tokens;
-	int i;
-	int index = 0, numTokens = 0, tokenIndex = 0, letterIndex = 0;
-	int tokenlen;
+	char **ptr;
+	int index = 0, tokens, t, letters, l;
 
-	numTokens = count_tokens(line, delim);
-
-	if (numTokens == 0)
+	tokens = count_tokens(line, delim);
+	if (tokens == 0)
 		return (NULL);
-	tokens = malloc((numTokens + 2) * sizeof(char *));
 
-	if (tokens == NULL)
+	ptr = malloc(sizeof(char *) * (tokens + 2));
+	if (!ptr)
 		return (NULL);
-	while (tokenIndex < numTokens)
+
+	for (t = 0; t < tokens; t++)
 	{
 		while (line[index] == *delim)
 			index++;
-		tokenlen = token_len(line + index, delim);
-		tokens[tokenIndex] = malloc(sizeof(char) * (tokenlen + 1));
 
-		if (tokens[tokenIndex] == NULL)
+		letters = token_len(line + index, delim);
+
+		ptr[t] = malloc(sizeof(char) * (letters + 1));
+		if (!ptr[t])
 		{
-			for (i = 0; i < tokenIndex; i++)
-				free(tokens[i]);
-			free(tokens);
+			for (index -= 1; index >= 0; index--)
+				free(ptr[index]);
+			free(ptr);
 			return (NULL);
 		}
-		while (letterIndex < tokenlen)
+
+		for (l = 0; l < letters; l++)
 		{
-			tokens[tokenIndex][letterIndex] = line[index];
+			ptr[t][l] = line[index];
 			index++;
-			letterIndex++;
 		}
-		tokens[tokenIndex][letterIndex] = ' ';
-		letterIndex = 0;
-		tokenIndex++;
+
+		ptr[t][l] = '\0';
 	}
-	tokens[tokenIndex] = NULL;
-	tokens[tokenIndex + 1] = NULL;
-	return (tokens);
+	ptr[t] = NULL;
+	ptr[t + 1] = NULL;
+
+	return (ptr);
 }
