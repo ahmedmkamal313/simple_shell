@@ -1,54 +1,55 @@
 #include "main.h"
 
 /**
- * _realloc - reallocat a memory block using malloc.
- * @ptr: the pointer to the previous memory.
- * @old_size: size of bytes.
- * @new_size: the size of ofg bytes for the new memory block.
- * Return: old_size or NULL otherwise the new memory.
+ * _realloc - Reallocates a memory block using malloc and free.
+ * @ptr: A pointer to the memory previously allocated.
+ * @old_size: The size in bytes of the allocated space for ptr.
+ * @new_size: The size in bytes for the new memory block.
+ *
+ * Return: If new_size == old_size - ptr.
+ *         If new_size == 0 and ptr is not NULL - NULL.
+ *         Otherwise - a pointer to the reallocated memory block.
  */
 
-void *_realloc(void *ptr, size_t old_size, size_t new_size)
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-	void *new_ptr;
-	size_t min_size;
+	void *mem;
+	char *ptr_copy, *filler;
+	unsigned int index;
 
-	/* If new_size is zero and ptr is not NULL, then free ptr and return NULL */
+	if (new_size == old_size)
+		return (ptr);
+
+	if (ptr == NULL)
+	{
+		mem = malloc(new_size);
+		if (mem == NULL)
+			return (NULL);
+
+		return (mem);
+	}
+
 	if (new_size == 0 && ptr != NULL)
 	{
 		free(ptr);
 		return (NULL);
 	}
 
-	/* If ptr is NULL, then allocate new memory of size new_size and return it */
-	if (ptr == NULL)
+	ptr_copy = ptr;
+	mem = malloc(sizeof(*ptr_copy) * new_size);
+	if (mem == NULL)
 	{
-		new_ptr = malloc(new_size);
-		return (new_ptr);
-	}
-
-	/* If new_size is equal to old_size, then do nothing and return ptr */
-	if (new_size == old_size)
-	{
-		return (ptr);
-	}
-
-	/* Allocate new memory of size new_size */
-	new_ptr = malloc(new_size);
-	if (new_ptr == NULL)
-	{
+		free(ptr);
 		return (NULL);
 	}
 
-	/* Copy the contents of the old memory block to the new one */
-	min_size = (old_size < new_size) ? old_size : new_size;
-	memcpy(new_ptr, ptr, min_size);
+	filler = mem;
 
-	/* Free the old memory block */
+	for (index = 0; index < old_size && index < new_size; index++)
+		filler[index] = *ptr_copy++;
+
 	free(ptr);
-
-	/* Return the pointer to the new memory block */
-	return (new_ptr);
+	return (mem);
 }
 
 /**
@@ -61,46 +62,49 @@ void *_realloc(void *ptr, size_t old_size, size_t new_size)
 
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
-	char *buffer; /* Temporary buffer to store input */
-	size_t b = 0; /* Size of buffer */
-	int c; /* Character read from stream */
+	static ssize_t input;
+	ssize_t ret;
+	char c = 'x', *buffer;
+	int r;
 
-	/* If lineptr or n or stream is NULL, return -1 */
-	if (lineptr == NULL || n == NULL || stream == NULL)
+	if (input == 0)
+		fflush(stream);
+	else
+		return (-1);
+	input = 0;
+
+	buffer = malloc(sizeof(char) * 120);
+	if (!buffer)
 		return (-1);
 
-	/* Allocate memory for buffer */
-	buffer = malloc(120 * sizeof(char));
-	if (buffer == NULL)
-		return (-1);
-
-	/* Flush the output buffer of stream */
-	fflush(stream);
-
-	/* Read characters from stream until newline or EOF or error */
-	while ((c = read(fileno(stream), &c, 1)) > 0 && c != '\n')
+	while (c != '\n')
 	{
-		/* Store character in buffer */
-		buffer[b] = c;
-		b++;
-		/* Reallocate memory for buffer if needed */
-		if (b >= 120)
+		r = read(STDIN_FILENO, &c, 1);
+		if (r == -1 || (r == 0 && input == 0))
 		{
-			buffer = realloc(buffer, (b + 1) * sizeof(char));
-			if (buffer == NULL)
-				return (-1);
+			free(buffer);
+			return (-1);
 		}
-	}
-	/* Add null terminator to buffer */
-	buffer[b] = '\0';
-	/* Reassign lineptr and n using assign_lineptr function */
-	assign_lineptr(lineptr, n, buffer, b + 1);
+		if (r == 0 && input != 0)
+		{
+			input++;
+			break;
+		}
 
-	/* If error occurred, return -1 */
-	if (c == -1)
-		return (-1);
-	/* Return number of bytes read */
-	return (b + 1);
+		if (input >= 120)
+			buffer = _realloc(buffer, input, input + 1);
+
+		buffer[input] = c;
+		input++;
+	}
+	buffer[input] = '\0';
+
+	assign_lineptr(lineptr, n, buffer, input);
+
+	ret = input;
+	if (r != 0)
+		input = 0;
+	return (ret);
 }
 
 /**
